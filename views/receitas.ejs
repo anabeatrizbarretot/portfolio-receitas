@@ -2,9 +2,26 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
     <title>Receitas</title>
 </head>
+
+      
 <body>
+
+    <div class="menu">
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <a href="/logout">Sair</a>
+    </div>
+
+    <a href="/logout">
+        Sair
+    </a>
+
+    <hr>
 
     <h1>Cadastrar Receita</h1>
 
@@ -22,11 +39,68 @@
 
         <br><br>
 
+        <h3>Categorias</h3>
+
+        <% categorias.forEach(categoria => { %>
+
+            <input
+                type="checkbox"
+                name="categorias"
+                value="<%= categoria.id %>"
+            >
+
+            <%= categoria.nome %>
+
+            <br>
+
+        <% }) %>
+
+        <br>
+
         <button type="submit">
             Salvar
         </button>
 
     </form>
+
+    <hr>
+
+    <h1>Lista de Receitas</h1>
+
+    <% receitas.forEach(receita => { %>
+
+        <div>
+
+            <h3><%= receita.nome %></h3>
+
+            <p><%= receita.descricao %></p>
+
+            <p>
+                Categorias:
+                <%= receita.categorias %>
+            </p>
+
+            <a href="<%= receita.link_externo %>">
+                Ver Receita
+            </a>
+
+            <br><br>
+
+            <a href="/receitas/excluir/<%= receita.id %>">
+                Excluir
+            </a>
+
+            <br><br>
+
+            <a href="/receitas/editar/<%= receita.id %>">
+                Editar
+            </a>
+
+        </div>
+
+        <hr>
+
+    <% }) %>
 
 </body>
 </html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Editar Receita</title>
+</head>
+<body>
+
+    <h1>Editar Receita</h1>
+
+    <form action="/receitas/editar/<%= receita.id %>" method="POST">
+
+        <input 
+            type="text" 
+            name="nome"
+            value="<%= receita.nome %>"
+        >
+
+        <br><br>
+
+        <textarea name="descricao"><%= receita.descricao %></textarea>
+
+        <br><br>
+
+        <input 
+            type="text"
+            name="link_externo"
+            value="<%= receita.link_externo %>"
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Atualizar
+        </button>
+
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Receitas Públicas</title>
+</head>
+<body>
+
+
+    <div class="menu">
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <a href="/logout">Sair</a>
+    </div>
+      
+    <h1>Receitas Públicas</h1>
+
+    <h3>Filtrar por categoria</h3>
+
+    <% categorias.forEach(categoria => { %>
+
+        <a href="/publico?categoria=<%= categoria.id %>">
+            <%= categoria.nome %>
+        </a>
+
+        <br><br>
+
+    <% }) %>
+
+    <hr>
+
+    <% receitas.forEach(receita => { %>
+
+        <div>
+
+            <h2><%= receita.nome %></h2>
+
+            <p><%= receita.descricao %></p>
+
+            <p>
+                Categorias:
+                <%= receita.categorias %>
+            </p>
+
+            <a href="<%= receita.link_externo %>">
+                Ver Receita
+            </a>
+
+        </div>
+
+        <hr>
+
+    <% }) %>
+
+</body>
+</html>

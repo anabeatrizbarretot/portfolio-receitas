@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Relatório</title>
+</head>
+<body>
+
+<body>
+
+    <div class="menu">
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <a href="/logout">Sair</a>
+    </div>
+
+    <h1>Relatório de Habilidades</h1>
+
+    <% habilidades.forEach(habilidade => { %>
+
+        <div>
+
+            <h2><%= habilidade.nome %></h2>
+
+            <p>
+                Quantidade de alunos:
+                <%= habilidade.quantidade %>
+            </p>
+
+            <p>
+                Proporção:
+                <%= habilidade.porcentagem %>%
+            </p>
+
+        </div>
+
+        <hr>
+
+    <% }) %>
+
+</body>
+</html>
