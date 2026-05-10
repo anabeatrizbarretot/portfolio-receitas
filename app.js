@@ -4,6 +4,7 @@ const session = require('express-session');
 const app = express();
 
 const db = require('./config/db');
+require('./config/mongo');
 
 app.set('view engine', 'ejs');
 
