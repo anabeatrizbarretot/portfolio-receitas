@@ -1,107 +1,261 @@
+/* Importação da fonte Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-body{
-    font-family: 'Poppins', sans-serif;
-    background-color: #f5eee6;
-    color: #4b2e2e;
+/* Variáveis de cores para facilitar mudanças futuras */
+:root {
+    --primary-color: #6f4e37;      /* Marrom café */
+    --primary-hover: #5c3b2e;      /* Marrom escuro */
+    --bg-body: #fdfaf6;            /* Off-white cremoso */
+    --bg-card: #ffffff;            /* Branco puro */
+    --text-color: #4b2e2e;         /* Texto marrom escuro */
+    --text-light: #7a6e67;         /* Texto secundário */
+    --border-color: #d8c3b1;       /* Bordas suaves */
+    --shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+/* Reset e Padronização de Fontes */
+* {
     margin: 0;
-    padding: 30px;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif !important; /* Força a fonte em tudo */
 }
 
-h1, h2, h3{
-    color: #5c3b2e;
+body {
+    background-color: var(--bg-body);
+    color: var(--text-color);
+    line-height: 1.6;
 }
 
-form{
-    background-color: #fffaf5;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+/* Links - Removendo o azul padrão */
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+/* Menu de Navegação */
+.menu {
+    background-color: var(--primary-color);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.menu a {
+    color: white !important; /* Garante que os links do menu sejam brancos */
+    margin: 0 15px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.menu a:hover {
+    color: #f5d7b2 !important;
+}
+
+/* Containers */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-hover);
     margin-bottom: 30px;
+    font-weight: 600;
 }
 
-input,
-textarea,
-select{
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #c8b6a6;
-    border-radius: 10px;
-    margin-top: 8px;
+h3 {
+    color: var(--primary-hover);
     margin-bottom: 15px;
-    font-size: 15px;
-    font-family: 'Poppins', sans-serif;
-    background-color: #fff;
-    color: #4b2e2e;
 }
 
-textarea{
-    min-height: 100px;
+/* Formulários - Correção da Distorção */
+form {
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    max-width: 700px;
+    margin: 0 auto 40px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--primary-hover);
+}
+
+/* Inputs, Textarea e Selects ocupando 100% da largura */
+form input[type="text"],
+form input[type="number"],
+form input[type="email"],
+form input[type="password"],
+form textarea,
+form select {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+form input:focus, form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+form textarea {
+    min-height: 120px;
     resize: vertical;
 }
 
-button{
-    background-color: #6f4e37;
+/* Botão de Cadastro */
+form button {
+    display: block;
+    width: 100%;
+    background-color: var(--primary-color);
     color: white;
+    padding: 14px;
     border: none;
-    padding: 12px 22px;
     border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
+    margin-top: 10px;
     transition: 0.3s;
 }
 
-button:hover{
-    background-color: #5c3b2e;
+form button:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.card{
-    background-color: #fffaf5;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-}
-
-a{
-    text-decoration: none;
-    color: #7b4f35;
-    font-weight: 500;
-}
-
-a:hover{
-    color: #4b2e2e;
-}
-
-.menu{
-    margin-bottom: 30px;
-    background-color: #6f4e37;
+/* Seleção de Categorias (Checkboxes) */
+.category-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    background: #fdfaf6;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 10px;
+    border: 1px dashed var(--border-color);
 }
 
-.menu a{
-    color: white;
-    margin-right: 20px;
+.category-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
 }
 
-.menu a:hover{
-    color: #f5d7b2;
+.category-item input {
+    margin-right: 8px;
+    width: auto !important; /* Evita que o checkbox fique gigante */
 }
 
-hr{
+/* Sistema de Cards (Receitas) */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.recipe-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    border: 1px solid #f0e6dd;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+}
+
+.recipe-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+}
+
+.recipe-card p {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* Badge de Categoria nos Cards */
+.category-badge {
+    display: inline-block;
+    background: #f0e6dd;
+    color: var(--primary-color);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Rodapé do Card com Links de Ação */
+.card-footer {
+    border-top: 1px solid #f9f5f2;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-link {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Relatórios e Outros */
+hr {
     border: none;
     height: 1px;
-    background-color: #d8c3b1;
-    margin: 25px 0;
+    background-color: var(--border-color);
+    margin: 40px 0;
 }
 
-.checkbox-group{
-    margin-bottom: 10px;
-}
-
-.checkbox-group input{
-    width: auto;
-    margin-right: 8px;
+/* Responsividade Básica */
+@media (max-width: 600px) {
+    .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .recipe-grid {
+        grid-template-columns: 1fr;
+    }
 }

@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Receitas</title>
+    <title>Minhas Receitas</title>
 </head>
-
-      
 <body>
 
     <div class="menu">
@@ -17,90 +15,68 @@
         <a href="/logout">Sair</a>
     </div>
 
-    <a href="/logout">
-        Sair
-    </a>
+    <div class="container">
+        <h1>Cadastrar Receita</h1>
 
-    <hr>
+        <form action="/receitas" method="POST">
+            <div class="form-group">
+                <label>Nome da Receita</label>
+                <input type="text" name="nome" placeholder="Ex: Bolo de Cenoura" required>
+            </div>
 
-    <h1>Cadastrar Receita</h1>
+            <div class="form-group">
+                <label>Descrição e Ingredientes</label>
+                <textarea name="descricao" placeholder="Descreva o modo de preparo..." required></textarea>
+            </div>
 
-    <form action="/receitas" method="POST">
+            <div class="form-group">
+                <label>Link do Vídeo ou Referência</label>
+                <input type="text" name="link_externo" placeholder="https://youtube.com/...">
+            </div>
 
-        <input type="text" name="nome" placeholder="Nome">
+            <div class="form-group">
+                <label>Categorias Existentes</label>
+                <div class="category-selection">
+                    <% categorias.forEach(categoria => { %>
+                        <label class="category-item">
+                            <input type="checkbox" name="categorias" value="<%= categoria.id %>">
+                            <%= categoria.nome %>
+                        </label>
+                    <% }) %>
+                </div>
+            </div>
 
-        <br><br>
+            <div class="form-group">
+                <label>Adicionar Nova Categoria (Opcional)</label>
+                <input type="text" name="nova_categoria_nome" placeholder="Ex: Vegana, Rápida...">
+            </div>
 
-        <textarea name="descricao" placeholder="Descrição"></textarea>
-
-        <br><br>
-
-        <input type="text" name="link_externo" placeholder="Link externo">
-
-        <br><br>
-
-        <h3>Categorias</h3>
-
-        <% categorias.forEach(categoria => { %>
-
-            <input
-                type="checkbox"
-                name="categorias"
-                value="<%= categoria.id %>"
-            >
-
-            <%= categoria.nome %>
-
-            <br>
-
-        <% }) %>
-
-        <br>
-
-        <button type="submit">
-            Salvar
-        </button>
-
-    </form>
-
-    <hr>
-
-    <h1>Lista de Receitas</h1>
-
-    <% receitas.forEach(receita => { %>
-
-        <div>
-
-            <h3><%= receita.nome %></h3>
-
-            <p><%= receita.descricao %></p>
-
-            <p>
-                Categorias:
-                <%= receita.categorias %>
-            </p>
-
-            <a href="<%= receita.link_externo %>">
-                Ver Receita
-            </a>
-
-            <br><br>
-
-            <a href="/receitas/excluir/<%= receita.id %>">
-                Excluir
-            </a>
-
-            <br><br>
-
-            <a href="/receitas/editar/<%= receita.id %>">
-                Editar
-            </a>
-
-        </div>
+            <button type="submit">Salvar Receita no Portfólio</button>
+        </form>
 
         <hr>
 
-    <% }) %>
+        <h1>Minha Lista de Receitas</h1>
+        <div class="recipe-grid">
+            <% receitas.forEach(receita => { %>
+                <div class="recipe-card">
+                    <span class="category-badge">
+                        <%= receita.categorias || 'Geral' %>
+                    </span>
+                    <h3><%= receita.nome %></h3>
+                    <p><%= receita.descricao %></p>
+                    
+                    <div class="card-footer">
+                        <a href="<%= receita.link_externo %>" target="_blank">Ver Receita</a>
+                        <div>
+                            <a href="/receitas/editar/<%= receita.id %>" style="margin-right: 15px;">Editar</a>
+                            <a href="/receitas/excluir/<%= receita.id %>" style="color: #d32f2f;">Excluir</a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
 
 </body>
 </html>

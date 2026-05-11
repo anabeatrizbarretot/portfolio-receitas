@@ -7,7 +7,6 @@
 </head>
 <body>
 
-
     <div class="menu">
         <a href="/receitas">Receitas</a>
         <a href="/publico">Público</a>
@@ -15,45 +14,35 @@
         <a href="/relatorio">Relatório</a>
         <a href="/logout">Sair</a>
     </div>
-      
-    <h1>Receitas Públicas</h1>
 
-    <h3>Filtrar por categoria</h3>
+    <div class="container">
+        <h1>Explorar Receitas</h1>
 
-    <% categorias.forEach(categoria => { %>
-
-        <a href="/publico?categoria=<%= categoria.id %>">
-            <%= categoria.nome %>
-        </a>
-
-        <br><br>
-
-    <% }) %>
-
-    <hr>
-
-    <% receitas.forEach(receita => { %>
-
-        <div>
-
-            <h2><%= receita.nome %></h2>
-
-            <p><%= receita.descricao %></p>
-
-            <p>
-                Categorias:
-                <%= receita.categorias %>
-            </p>
-
-            <a href="<%= receita.link_externo %>">
-                Ver Receita
-            </a>
-
+        <h3 style="text-align: center;">Filtrar por Categoria</h3>
+        <div style="text-align: center; margin-bottom: 40px;">
+            <a href="/publico" class="category-badge" style="background: #6f4e37; color: white;">Todas</a>
+            <% categorias.forEach(categoria => { %>
+                <a href="/publico?categoria=<%= categoria.id %>" class="category-badge">
+                    <%= categoria.nome %>
+                </a>
+            <% }) %>
         </div>
 
-        <hr>
-
-    <% }) %>
+        <div class="recipe-grid">
+            <% receitas.forEach(receita => { %>
+                <div class="recipe-card">
+                    <span class="category-badge">
+                        <%= receita.categorias || 'Geral' %>
+                    </span>
+                    <h3><%= receita.nome %></h3>
+                    <p><%= receita.descricao %></p>
+                    <div class="card-footer">
+                        <a href="<%= receita.link_externo %>" target="_blank" class="btn-link">Ver Receita Completa</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
 
 </body>
 </html>

@@ -7,35 +7,56 @@
 </head>
 <body>
 
-    <h1>Editar Receita</h1>
+    <div class="menu">
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <a href="/logout">Sair</a>
+    </div>
 
-    <form action="/receitas/editar/<%= receita.id %>" method="POST">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Editar Receita</h1>
+            <a href="/receitas" class="category-badge" style="background: #ccc; color: #333;">← Voltar</a>
+        </div>
 
-        <input 
-            type="text" 
-            name="nome"
-            value="<%= receita.nome %>"
-        >
+        <form action="/receitas/editar/<%= receita.id %>" method="POST">
+            <div class="form-group">
+                <label>Nome da Receita</label>
+                <input type="text" name="nome" value="<%= receita.nome %>" required>
+            </div>
 
-        <br><br>
+            <div class="form-group">
+                <label>Descrição e Ingredientes</label>
+                <textarea name="descricao" required><%= receita.descricao %></textarea>
+            </div>
 
-        <textarea name="descricao"><%= receita.descricao %></textarea>
+            <div class="form-group">
+                <label>Link Externo</label>
+                <input type="text" name="link_externo" value="<%= receita.link_externo %>">
+            </div>
 
-        <br><br>
+            <div class="form-group">
+                <label>Categorias da Receita</label>
+                <div class="category-selection">
+                    <% categorias.forEach(categoria => { %>
+                        <label class="category-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="<%= categoria.id %>"
+                                <%= receita.categorias_ids && receita.categorias_ids.includes(categoria.id) ? 'checked' : '' %>
+                            >
+                            <%= categoria.nome %>
+                        </label>
+                    <% }) %>
+                </div>
+            </div>
 
-        <input 
-            type="text"
-            name="link_externo"
-            value="<%= receita.link_externo %>"
-        >
-
-        <br><br>
-
-        <button type="submit">
-            Atualizar
-        </button>
-
-    </form>
+            <button type="submit">Atualizar Receita</button>
+        </form>
+    </div>
 
 </body>
 </html>
