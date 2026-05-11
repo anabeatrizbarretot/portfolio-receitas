@@ -1,261 +1,50 @@
-/* Importação da fonte Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-/* Variáveis de cores para facilitar mudanças futuras */
 :root {
-    --primary-color: #6f4e37;      /* Marrom café */
-    --primary-hover: #5c3b2e;      /* Marrom escuro */
-    --bg-body: #fdfaf6;            /* Off-white cremoso */
-    --bg-card: #ffffff;            /* Branco puro */
-    --text-color: #4b2e2e;         /* Texto marrom escuro */
-    --text-light: #7a6e67;         /* Texto secundário */
-    --border-color: #d8c3b1;       /* Bordas suaves */
-    --shadow: 0 4px 15px rgba(0,0,0,0.06);
+    --primary: #6f4e37;
+    --primary-dark: #5c3b2e;
+    --bg: #fdfaf6;
+    --card: #ffffff;
+    --text: #4b2e2e;
+    --border: #d8c3b1;
 }
 
-/* Reset e Padronização de Fontes */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif !important; /* Força a fonte em tudo */
-}
+* { font-family: 'Poppins', sans-serif !important; box-sizing: border-box; }
+body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; }
 
-body {
-    background-color: var(--bg-body);
-    color: var(--text-color);
-    line-height: 1.6;
-}
+/* Links sem azul */
+a { text-decoration: none; color: var(--primary); transition: 0.3s; }
+a:hover { color: var(--primary-dark); }
 
-/* Links - Removendo o azul padrão */
-a {
-    text-decoration: none;
-    color: var(--primary-color);
-    transition: 0.3s ease;
-}
+.menu { background: var(--primary); padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.menu a { color: white !important; margin: 0 15px; font-weight: 500; }
+.container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
 
-a:hover {
-    color: var(--primary-hover);
-}
+h1 { text-align: center; color: var(--primary-dark); margin-bottom: 30px; }
 
-/* Menu de Navegação */
-.menu {
-    background-color: var(--primary-color);
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+/* Formulários Organizados */
+form { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 40px; }
+.form-group { margin-bottom: 20px; }
+label { display: block; font-weight: 500; margin-bottom: 8px; }
+input[type="text"], textarea, input[type="file"] { 
+    width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; display: block;
 }
+textarea { min-height: 120px; }
+button { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+button:hover { background: var(--primary-dark); }
 
-.menu a {
-    color: white !important; /* Garante que os links do menu sejam brancos */
-    margin: 0 15px;
-    font-weight: 500;
-    font-size: 0.95rem;
+/* Configuração dos Cards para não desconfigurar */
+.recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+.recipe-card { 
+    background: var(--card); border-radius: 20px; padding: 20px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06); display: flex; flex-direction: column; height: 100%;
 }
+.recipe-card img { 
+    width: 100%; height: 200px; object-fit: cover; /* Mantém a proporção sem distorcer */
+    border-radius: 15px; margin-bottom: 15px; 
+}
+.category-badge { background: #f0e6dd; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; margin-bottom: 10px; display: inline-block; }
+.recipe-card h3 { margin: 0 0 10px 0; color: var(--primary-dark); }
+.recipe-card p { font-size: 14px; color: #666; flex-grow: 1; margin-bottom: 20px; }
 
-.menu a:hover {
-    color: #f5d7b2 !important;
-}
-
-/* Containers */
-.container {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-h1 {
-    text-align: center;
-    color: var(--primary-hover);
-    margin-bottom: 30px;
-    font-weight: 600;
-}
-
-h3 {
-    color: var(--primary-hover);
-    margin-bottom: 15px;
-}
-
-/* Formulários - Correção da Distorção */
-form {
-    background: var(--bg-card);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    max-width: 700px;
-    margin: 0 auto 40px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-form label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--primary-hover);
-}
-
-/* Inputs, Textarea e Selects ocupando 100% da largura */
-form input[type="text"],
-form input[type="number"],
-form input[type="email"],
-form input[type="password"],
-form textarea,
-form select {
-    display: block;
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    background-color: #fff;
-    font-size: 14px;
-    transition: border-color 0.3s;
-}
-
-form input:focus, form textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-form textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-/* Botão de Cadastro */
-form button {
-    display: block;
-    width: 100%;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: 0.3s;
-}
-
-form button:hover {
-    background-color: var(--primary-hover);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-/* Seleção de Categorias (Checkboxes) */
-.category-selection {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    background: #fdfaf6;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px dashed var(--border-color);
-}
-
-.category-item {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.category-item input {
-    margin-right: 8px;
-    width: auto !important; /* Evita que o checkbox fique gigante */
-}
-
-/* Sistema de Cards (Receitas) */
-.recipe-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
-}
-
-.recipe-card {
-    background: var(--bg-card);
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: var(--shadow);
-    border: 1px solid #f0e6dd;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease;
-}
-
-.recipe-card:hover {
-    transform: translateY(-5px);
-}
-
-.recipe-card h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.3rem;
-}
-
-.recipe-card p {
-    font-size: 14px;
-    color: var(--text-light);
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-/* Badge de Categoria nos Cards */
-.category-badge {
-    display: inline-block;
-    background: #f0e6dd;
-    color: var(--primary-color);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    text-transform: uppercase;
-}
-
-/* Rodapé do Card com Links de Ação */
-.card-footer {
-    border-top: 1px solid #f9f5f2;
-    padding-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.btn-link {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.card-actions {
-    display: flex;
-    gap: 12px;
-}
-
-/* Relatórios e Outros */
-hr {
-    border: none;
-    height: 1px;
-    background-color: var(--border-color);
-    margin: 40px 0;
-}
-
-/* Responsividade Básica */
-@media (max-width: 600px) {
-    .menu {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .recipe-grid {
-        grid-template-columns: 1fr;
-    }
-}
+.card-footer { border-top: 1px solid #f0f0f0; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }

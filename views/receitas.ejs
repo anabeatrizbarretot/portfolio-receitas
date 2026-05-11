@@ -18,65 +18,65 @@
     <div class="container">
         <h1>Cadastrar Receita</h1>
 
-        <form action="/receitas" method="POST">
+        <form action="/receitas" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Nome da Receita</label>
-                <input type="text" name="nome" placeholder="Ex: Bolo de Cenoura" required>
+                <input type="text" name="nome" placeholder="Ex: Risoto de Alho Poró" required>
             </div>
 
             <div class="form-group">
-                <label>Descrição e Ingredientes</label>
-                <textarea name="descricao" placeholder="Descreva o modo de preparo..." required></textarea>
+                <label>Descrição</label>
+                <textarea name="descricao" placeholder="Ingredientes e preparo..." required></textarea>
             </div>
 
             <div class="form-group">
-                <label>Link do Vídeo ou Referência</label>
-                <input type="text" name="link_externo" placeholder="https://youtube.com/...">
+                <label>Link Externo</label>
+                <input type="text" name="link_externo" placeholder="Link do vídeo ou site">
             </div>
 
             <div class="form-group">
-                <label>Categorias Existentes</label>
+                <label>Foto da Receita</label>
+                <input type="file" name="imagem" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>Categorias</label>
                 <div class="category-selection">
-                    <% categorias.forEach(categoria => { %>
+                    <% categorias.forEach(c => { %>
                         <label class="category-item">
-                            <input type="checkbox" name="categorias" value="<%= categoria.id %>">
-                            <%= categoria.nome %>
+                            <input type="checkbox" name="categorias" value="<%= c.id %>"> <%= c.nome %>
                         </label>
                     <% }) %>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Adicionar Nova Categoria (Opcional)</label>
-                <input type="text" name="nova_categoria_nome" placeholder="Ex: Vegana, Rápida...">
-            </div>
-
-            <button type="submit">Salvar Receita no Portfólio</button>
+            <button type="submit">Salvar Receita</button>
         </form>
 
         <hr>
 
-        <h1>Minha Lista de Receitas</h1>
         <div class="recipe-grid">
-            <% receitas.forEach(receita => { %>
+            <% receitas.forEach(r => { %>
                 <div class="recipe-card">
-                    <span class="category-badge">
-                        <%= receita.categorias || 'Geral' %>
-                    </span>
-                    <h3><%= receita.nome %></h3>
-                    <p><%= receita.descricao %></p>
+                    <% if (r.imagem_url) { %>
+                        <img src="/uploads/<%= r.imagem_url %>" alt="<%= r.nome %>">
+                    <% } else { %>
+                        <img src="/img/padrao.png" alt="Imagem Padrão">
+                    <% } %>
+
+                    <span class="category-badge"><%= r.categorias || 'Geral' %></span>
+                    <h3><%= r.nome %></h3>
                     
                     <div class="card-footer">
-                        <a href="<%= receita.link_externo %>" target="_blank">Ver Receita</a>
-                        <div>
-                            <a href="/receitas/editar/<%= receita.id %>" style="margin-right: 15px;">Editar</a>
-                            <a href="/receitas/excluir/<%= receita.id %>" style="color: #d32f2f;">Excluir</a>
+                        <a href="<%= r.link_externo %>" target="_blank" class="btn-link">Ver Link</a>
+                        <div class="card-actions">
+                            <a href="/receitas/editar/<%= r.id %>">Editar</a>
+                            <a href="/receitas/excluir/<%= r.id %>" style="color: #d32f2f;">Excluir</a>
                         </div>
                     </div>
                 </div>
             <% }) %>
         </div>
     </div>
-
 </body>
 </html>

@@ -3,41 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Receitas Públicas</title>
+    <title>Portfólio Público</title>
 </head>
 <body>
 
     <div class="menu">
-        <a href="/receitas">Receitas</a>
-        <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a>
-        <a href="/relatorio">Relatório</a>
-        <a href="/logout">Sair</a>
+        <a href="/publico">Início</a>
+        <a href="/login">Área Restrita</a>
     </div>
 
     <div class="container">
-        <h1>Explorar Receitas</h1>
+        <h1>Receitas dos Alunos</h1>
 
-        <h3 style="text-align: center;">Filtrar por Categoria</h3>
         <div style="text-align: center; margin-bottom: 40px;">
             <a href="/publico" class="category-badge" style="background: #6f4e37; color: white;">Todas</a>
-            <% categorias.forEach(categoria => { %>
-                <a href="/publico?categoria=<%= categoria.id %>" class="category-badge">
-                    <%= categoria.nome %>
-                </a>
+            <% categorias.forEach(c => { %>
+                <a href="/publico?categoria=<%= c.id %>" class="category-badge"><%= c.nome %></a>
             <% }) %>
         </div>
 
         <div class="recipe-grid">
-            <% receitas.forEach(receita => { %>
+            <% receitas.forEach(r => { %>
                 <div class="recipe-card">
-                    <span class="category-badge">
-                        <%= receita.categorias || 'Geral' %>
-                    </span>
-                    <h3><%= receita.nome %></h3>
-                    <p><%= receita.descricao %></p>
+                    <% if (r.imagem_url) { %>
+                        <img src="/uploads/<%= r.imagem_url %>" alt="<%= r.nome %>">
+                    <% } else { %>
+                        <img src="/img/padrao.png" alt="Imagem Padrão">
+                    <% } %>
+
+                    <span class="category-badge"><%= r.categorias || 'Geral' %></span>
+                    <h3><%= r.nome %></h3>
+                    <p><%= r.descricao %></p>
                     <div class="card-footer">
-                        <a href="<%= receita.link_externo %>" target="_blank" class="btn-link">Ver Receita Completa</a>
+                        <a href="<%= r.link_externo %>" target="_blank" class="btn-link">Ver Receita Completa</a>
                     </div>
                 </div>
             <% }) %>
