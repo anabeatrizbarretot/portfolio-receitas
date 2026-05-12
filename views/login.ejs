@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Login</title>
+    <title>Login - Portfólio de Receitas</title>
 </head>
 <body>
 
-    <h1>Login</h1>
+    <div class="login-container">
+        <h1>Login</h1>
 
-    <form action="/login" method="POST">
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" placeholder="seu@email.com" required>
+            </div>
 
-        <input type="email" name="email" placeholder="Email">
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" name="senha" placeholder="Sua senha" required>
+            </div>
 
-        <br><br>
-
-        <input type="password" name="senha" placeholder="Senha">
-
-        <br><br>
-
-        <button type="submit">Entrar</button>
-
-    </form>
+            <button type="submit">Entrar no Sistema</button>
+        </form>
+    </div>
 
 </body>
 </html>

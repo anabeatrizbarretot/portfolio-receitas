@@ -1,77 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8"><link rel="stylesheet" href="/css/style.css">
     <title>Minhas Receitas</title>
 </head>
 <body>
-
     <div class="menu">
-        <a href="/receitas">Receitas</a>
-        <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a>
-        <a href="/relatorio">Relatório</a>
-        <a href="/logout">Sair</a>
+        <a href="/receitas">Receitas</a> <a href="/publico">Público</a> <a href="/logout">Sair</a>
     </div>
 
     <div class="container">
         <h1>Cadastrar Receita</h1>
-
         <form action="/receitas" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Nome da Receita</label>
-                <input type="text" name="nome" placeholder="Ex: Risoto de Alho Poró" required>
-            </div>
+            <div class="form-group"><label>Nome da Receita</label><input type="text" name="nome" required></div>
+            <div class="form-group"><label>Descrição</label><textarea name="descricao" required></textarea></div>
+            <div class="form-group"><label>Link Externo</label><input type="text" name="link_externo"></div>
+            <div class="form-group"><label>Foto</label><input type="file" name="imagem" accept="image/*"></div>
 
             <div class="form-group">
-                <label>Descrição</label>
-                <textarea name="descricao" placeholder="Ingredientes e preparo..." required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Link Externo</label>
-                <input type="text" name="link_externo" placeholder="Link do vídeo ou site">
-            </div>
-
-            <div class="form-group">
-                <label>Foto da Receita</label>
-                <input type="file" name="imagem" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label>Categorias</label>
-                <div class="category-selection">
+                <label>Categorias Existentes</label>
+                <div class="category-selection" style="display: flex; flex-wrap: wrap; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
                     <% categorias.forEach(c => { %>
-                        <label class="category-item">
-                            <input type="checkbox" name="categorias" value="<%= c.id %>"> <%= c.nome %>
-                        </label>
+                        <label style="cursor:pointer; font-size: 14px;"><input type="checkbox" name="categorias" value="<%= c.id %>"> <%= c.nome %></label>
                     <% }) %>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label>Adicionar Outra Categoria</label>
+                <input type="text" name="nova_categoria_nome" placeholder="Digite aqui...">
             </div>
 
             <button type="submit">Salvar Receita</button>
         </form>
 
-        <hr>
-
         <div class="recipe-grid">
             <% receitas.forEach(r => { %>
                 <div class="recipe-card">
-                    <% if (r.imagem_url) { %>
-                        <img src="/uploads/<%= r.imagem_url %>" alt="<%= r.nome %>">
-                    <% } else { %>
-                        <img src="/img/padrao.png" alt="Imagem Padrão">
-                    <% } %>
-
+                    <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : 'https://images.unsplash.com/photo-1495195129352-aeb325a55b65?q=80&w=400&h=250&auto=format&fit=crop' %>" alt="<%= r.nome %>">
                     <span class="category-badge"><%= r.categorias || 'Geral' %></span>
                     <h3><%= r.nome %></h3>
-                    
                     <div class="card-footer">
-                        <a href="<%= r.link_externo %>" target="_blank" class="btn-link">Ver Link</a>
+                        <a href="<%= r.link_externo %>" target="_blank">Ver Link</a>
                         <div class="card-actions">
                             <a href="/receitas/editar/<%= r.id %>">Editar</a>
-                            <a href="/receitas/excluir/<%= r.id %>" style="color: #d32f2f;">Excluir</a>
+                            <a href="/receitas/excluir/<%= r.id %>" class="btn-delete">Excluir</a>
                         </div>
                     </div>
                 </div>

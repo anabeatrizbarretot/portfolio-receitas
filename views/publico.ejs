@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8"><link rel="stylesheet" href="/css/style.css">
     <title>Portfólio Público</title>
 </head>
 <body>
-
     <div class="menu">
-        <a href="/publico">Início</a>
-        <a href="/login">Área Restrita</a>
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <a href="/logout">Sair</a>
     </div>
 
     <div class="container">
         <h1>Receitas dos Alunos</h1>
-
-        <div style="text-align: center; margin-bottom: 40px;">
-            <a href="/publico" class="category-badge" style="background: #6f4e37; color: white;">Todas</a>
+        <div style="text-align:center; margin-bottom: 30px;">
+            <a href="/publico" class="category-badge" style="background: #2563eb; color: white;">Todas</a>
             <% categorias.forEach(c => { %>
                 <a href="/publico?categoria=<%= c.id %>" class="category-badge"><%= c.nome %></a>
             <% }) %>
@@ -25,22 +25,16 @@
         <div class="recipe-grid">
             <% receitas.forEach(r => { %>
                 <div class="recipe-card">
-                    <% if (r.imagem_url) { %>
-                        <img src="/uploads/<%= r.imagem_url %>" alt="<%= r.nome %>">
-                    <% } else { %>
-                        <img src="/img/padrao.png" alt="Imagem Padrão">
-                    <% } %>
-
-                    <span class="category-badge"><%= r.categorias || 'Geral' %></span>
+                    <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>" alt="<%= r.nome %>">
+                    <span class="category-badge"><%= r.categorias %></span>
                     <h3><%= r.nome %></h3>
                     <p><%= r.descricao %></p>
                     <div class="card-footer">
-                        <a href="<%= r.link_externo %>" target="_blank" class="btn-link">Ver Receita Completa</a>
+                        <a href="<%= r.link_externo %>" target="_blank" style="font-weight: 600;">Ver Completa</a>
                     </div>
                 </div>
             <% }) %>
         </div>
     </div>
-
 </body>
 </html>

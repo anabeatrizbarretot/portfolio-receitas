@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Painel Principal - Portfólio de Receitas</title>
+</head>
+<body>
+    <div class="menu">
+        <a href="/home">Início</a>
+        <a href="/receitas">Gerenciar Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Minhas Habilidades</a>
+        <a href="/relatorio">Relatório Geral</a>
+        <a href="/logout">Sair</a>
+    </div>
+
+    <div class="container">
+        <h1>Bem-vindo, <%= usuario.nome %>!</h1>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">O que você deseja fazer hoje?</p>
+
+        <div class="recipe-grid">
+            <div class="recipe-card" style="text-align: center; cursor: pointer;" onclick="location.href='/receitas'">
+                <div style="font-size: 50px; margin-bottom: 15px;">🍳</div>
+                <h3>Gerenciar Receitas</h3>
+                <p>Cadastre novas criações, edite ou exclua receitas do seu portfólio pessoal.</p>
+                <a href="/receitas" class="category-badge" style="background: var(--primary); color: white;">Acessar</a>
+            </div>
+
+            <div class="recipe-card" style="text-align: center; cursor: pointer;" onclick="location.href='/publico'">
+                <div style="font-size: 50px; margin-bottom: 15px;">🌍</div>
+                <h3>Ver Portfólio Público</h3>
+                <p>Veja como as suas receitas e as de seus colegas aparecem para visitantes externos.</p>
+                <a href="/publico" class="category-badge" style="background: var(--primary); color: white;">Explorar</a>
+            </div>
+
+            <div class="recipe-card" style="text-align: center; cursor: pointer;" onclick="location.href='/habilidades'">
+                <div style="font-size: 50px; margin-bottom: 15px;">📊</div>
+                <h3>Minhas Habilidades</h3>
+                <p>Atualize seu nível técnico em diferentes áreas da culinária (Escala 0-10).</p>
+                <a href="/habilidades" class="category-badge" style="background: var(--primary); color: white;">Atualizar</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
