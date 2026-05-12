@@ -6,18 +6,14 @@
 </head>
 <body>
     <div class="menu">
-        <a href="/home">Início</a>
-        <a href="/receitas">Receitas</a>
-        <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a>
-        <a href="/relatorio">Relatório</a>
-        <a href="/logout">Sair</a>
+        <a href="/home">Início</a> <a href="/receitas">Receitas</a> <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a> <a href="/relatorio">Relatório</a> <a href="/logout">Sair</a>
     </div>
 
     <div class="container">
         <h1>Receitas dos Alunos</h1>
         <div style="text-align:center; margin-bottom: 30px;">
-            <a href="/publico" class="category-badge" style="background: #2563eb; color: white;">Todas</a>
+            <a href="/publico" class="category-badge" style="background: var(--primary); color: white;">Todas</a>
             <% categorias.forEach(c => { %>
                 <a href="/publico?categoria=<%= c.id %>" class="category-badge"><%= c.nome %></a>
             <% }) %>
@@ -29,13 +25,66 @@
                     <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>" alt="<%= r.nome %>">
                     <span class="category-badge"><%= r.categorias %></span>
                     <h3><%= r.nome %></h3>
-                    <p><%= r.descricao %></p>
-                    <div class="card-footer">
-                        <a href="<%= r.link_externo %>" target="_blank" style="font-weight: 600;">Ver Completa</a>
+                    <div class="card-footer" style="border-top: 1px solid var(--border); padding-top: 15px; margin-top: auto;">
+                        <button onclick="abrirPopup('<%= r.nome.replace(/'/g, "\\'") %>', '<%= r.descricao.replace(/\r?\n/g, '<br>').replace(/'/g, "\\'") %>', '<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>', '/receitas/editar/<%= r.id %>', '<%= r.categorias %>', '<%= r.link_externo %>')" 
+                                style="background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; font-family: inherit;">
+                            Ver Detalhes
+                        </button>
                     </div>
                 </div>
             <% }) %>
         </div>
     </div>
+
+    <div id="popupReceita" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fecharPopup()">&times;</span>
+            <img id="popImg" src="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px;">
+            
+            <div style="margin-top: 20px;">
+                <span id="popCategorias" class="category-badge" style="background: #e2e8f0; color: #475569;"></span>
+                <h2 id="popTitulo" style="margin-top: 10px;"></h2>
+            </div>
+
+            <p id="popDesc" style="margin: 20px 0; color: var(--text-muted); line-height: 1.6;"></p>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; border-top: 1px solid var(--border); padding-top: 20px; align-items: center;">
+                <a id="popLinkExterno" href="#" target="_blank" class="category-badge" style="background: #10b981; color: white; padding: 10px 20px; text-decoration: none;">Ver Referência / Vídeo</a>
+                
+                <a id="popLinkEdit" href="#" class="category-badge" style="background: var(--primary); color: white; padding: 10px 20px; text-decoration: none;">Editar Receita</a>
+                
+                <button onclick="fecharPopup()" style="background: #e2e8f0; color: var(--text-main); width: auto; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirPopup(titulo, descricao, imagem, linkEdit, categorias, linkExterno) {
+            document.getElementById('popTitulo').innerText = titulo;
+            document.getElementById('popDesc').innerHTML = descricao;
+            document.getElementById('popImg').src = imagem;
+            document.getElementById('popLinkEdit').href = linkEdit;
+            
+            // Exibir Categorias
+            document.getElementById('popCategorias').innerText = categorias || 'Geral';
+
+            // Lógica para o Link Externo
+            const btnLink = document.getElementById('popLinkExterno');
+            if (linkExterno && linkExterno !== 'null' && linkExterno !== '') {
+                btnLink.href = linkExterno;
+                btnLink.style.display = 'inline-block';
+            } else {
+                btnLink.style.display = 'none';
+            }
+
+            document.getElementById('popupReceita').style.display = 'flex';
+        }
+
+        function fecharPopup() { document.getElementById('popupReceita').style.display = 'none'; }
+        
+        window.onclick = function(event) { 
+            if (event.target == document.getElementById('popupReceita')) fecharPopup(); 
+        }
+    </script>
 </body>
 </html>

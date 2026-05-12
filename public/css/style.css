@@ -1,42 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
+/* PORTFÓLIO DE RECEITAS - VERSÃO FINAL AZUL */
 :root {
-    --primary: #2563eb;      /* Azul */
-    --primary-dark: #1e40af; /* Azul Escuro */
-    --bg: #f1f5f9;           /* Cinza Claro */
-    --card: #ffffff;         /* Branco */
-    --text: #0f172a;         /* Preto Azulado */
-    --text-light: #64748b;   /* Cinza Texto */
+    --primary: #2563eb;      /* Azul Royal */
+    --primary-dark: #1e40af; /* Azul Marinho */
+    --nav-bg: #1e293b;       /* Cinza Escuro / Preto */
+    --bg-body: #f1f5f9;      /* Cinza Claro (Fundo) */
+    --card-bg: #ffffff;      /* Branco */
+    --text-main: #0f172a;    /* Preto Azulado */
+    --text-muted: #64748b;   /* Cinza Texto */
     --border: #e2e8f0;       /* Cinza Borda */
-    --nav-bg: #1e293b;       /* Cinza Escuro (Navbar) */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif !important; }
-body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
-a { text-decoration: none; color: var(--primary); transition: 0.3s; }
+body { background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; }
 
-/* Navbar Padronizada */
-.menu { background: var(--nav-bg); padding: 1rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.menu a { color: #f8fafc !important; margin: 0 15px; font-weight: 500; font-size: 0.95rem; }
+/* Navbar Única */
+.menu { background: var(--nav-bg); padding: 1.2rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+.menu a { color: #f8fafc !important; margin: 0 15px; font-weight: 500; text-decoration: none; }
 .menu a:hover { color: var(--primary) !important; }
 
+/* Containers */
 .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
 h1 { text-align: center; color: var(--nav-bg); margin-bottom: 30px; font-weight: 600; }
 
-/* Formulários Modernos */
-form { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); max-width: 800px; margin: 0 auto 40px; }
+/* Formulários (Azul e Cinza) */
+form { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); max-width: 800px; margin: 0 auto 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
 .form-group { margin-bottom: 20px; }
-label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--text); }
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea, select { 
-    width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; 
-}
-button { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+button, .btn-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 1rem; }
 button:hover { background: var(--primary-dark); }
 
-/* Grid de Cartões */
+/* Grid e Cards */
 .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-.recipe-card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); display: flex; flex-direction: column; }
+.recipe-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; }
 .recipe-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
-.category-badge { background: #e2e8f0; color: #475569; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.category-badge { background: #e2e8f0; color: #475569; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; }
 
-.card-footer { border-top: 1px solid var(--border); padding-top: 15px; margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+/* Modal (Popup) */
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); justify-content: center; align-items: center; }
+.modal-content { background: var(--card-bg); padding: 40px; border-radius: 15px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; position: relative; }
+.close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: var(--text-muted); }
