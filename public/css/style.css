@@ -1,223 +1,42 @@
-/* Importação da fonte Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-/* Nova Paleta de Cores: Azul, Cinza e Preto */
 :root {
-    --primary-color: #2563eb;      /* Azul Moderno */
-    --primary-hover: #1e40af;      /* Azul Escuro para Hover */
-    --bg-body: #f1f5f9;            /* Cinza Muito Claro (Fundo) */
-    --bg-card: #ffffff;            /* Branco (Cards) */
-    --text-main: #0f172a;          /* Preto/Azul Marinho Escuro (Texto) */
-    --text-muted: #64748b;         /* Cinza (Texto Secundário) */
-    --border-color: #e2e8f0;       /* Cinza para Bordas */
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --primary: #2563eb;      /* Azul */
+    --primary-dark: #1e40af; /* Azul Escuro */
+    --bg: #f1f5f9;           /* Cinza Claro */
+    --card: #ffffff;         /* Branco */
+    --text: #0f172a;         /* Preto Azulado */
+    --text-light: #64748b;   /* Cinza Texto */
+    --border: #e2e8f0;       /* Cinza Borda */
+    --nav-bg: #1e293b;       /* Cinza Escuro (Navbar) */
 }
 
-/* Reset Global */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif !important;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif !important; }
+body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
+a { text-decoration: none; color: var(--primary); transition: 0.3s; }
 
-body {
-    background-color: var(--bg-body);
-    color: var(--text-main);
-    line-height: 1.6;
-}
+/* Navbar Padronizada */
+.menu { background: var(--nav-bg); padding: 1rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.menu a { color: #f8fafc !important; margin: 0 15px; font-weight: 500; font-size: 0.95rem; }
+.menu a:hover { color: var(--primary) !important; }
 
-/* Navegação e Links */
-a {
-    text-decoration: none;
-    color: var(--primary-color);
-    transition: 0.3s ease;
-}
+.container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+h1 { text-align: center; color: var(--nav-bg); margin-bottom: 30px; font-weight: 600; }
 
-a:hover {
-    color: var(--primary-hover);
+/* Formulários Modernos */
+form { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); max-width: 800px; margin: 0 auto 40px; }
+.form-group { margin-bottom: 20px; }
+label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--text); }
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea, select { 
+    width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; 
 }
+button { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+button:hover { background: var(--primary-dark); }
 
-.menu {
-    background-color: #1e293b; /* Cinza Escuro Quase Preto */
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
+/* Grid de Cartões */
+.recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+.recipe-card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); display: flex; flex-direction: column; }
+.recipe-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
+.category-badge { background: #e2e8f0; color: #475569; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
 
-.menu a {
-    color: #f8fafc !important; /* Branco Acinzentado */
-    margin: 0 15px;
-    font-weight: 500;
-    font-size: 0.95rem;
-}
-
-.menu a:hover {
-    color: var(--primary-color) !important;
-}
-
-/* Estrutura de Container */
-.container {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-h1 {
-    text-align: center;
-    color: #1e293b;
-    margin-bottom: 30px;
-    font-weight: 600;
-}
-
-/* Formulários Organizados (Não desfigura) */
-form {
-    background: var(--bg-card);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    max-width: 700px;
-    margin: 0 auto 40px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-form label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #334155;
-}
-
-form input[type="text"],
-form input[type="email"],
-form input[type="password"],
-form input[type="number"],
-form textarea,
-form select {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background-color: #fff;
-    font-size: 14px;
-    color: var(--text-main);
-}
-
-form textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-form button {
-    display: block;
-    width: 100%;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-form button:hover {
-    background-color: var(--primary-hover);
-}
-
-/* Grid e Cards de Receitas */
-.recipe-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
-}
-
-.recipe-card {
-    background: var(--bg-card);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease;
-}
-
-.recipe-card:hover {
-    transform: translateY(-4px);
-}
-
-.recipe-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    background-color: #e2e8f0; /* Fundo cinza caso a imagem falhe */
-}
-
-/* Badges e Categorias */
-.category-badge {
-    display: inline-block;
-    background: #e2e8f0;
-    color: #475569;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-}
-
-.recipe-card h3 {
-    margin-bottom: 10px;
-    color: #1e293b;
-    font-size: 1.25rem;
-}
-
-.recipe-card p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-/* Rodapé dos Cards */
-.card-footer {
-    border-top: 1px solid var(--border-color);
-    padding-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-actions {
-    display: flex;
-    gap: 15px;
-}
-
-.btn-delete {
-    color: #ef4444; /* Vermelho para exclusão */
-}
-
-/* Centralização do Login */
-.login-container {
-    max-width: 400px;
-    margin: 80px auto;
-    padding: 0 20px;
-}
-
-hr {
-    border: none;
-    height: 1px;
-    background-color: var(--border-color);
-    margin: 40px 0;
-}
+.card-footer { border-top: 1px solid var(--border); padding-top: 15px; margin-top: auto; display: flex; justify-content: space-between; align-items: center; }

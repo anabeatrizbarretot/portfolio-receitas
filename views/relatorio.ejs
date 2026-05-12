@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Relatório</title>
+    <title>Relatório de Habilidades</title>
 </head>
 <body>
 
-<body>
-
     <div class="menu">
+        <a href="/home">Início</a>
         <a href="/receitas">Receitas</a>
         <a href="/publico">Público</a>
         <a href="/habilidades">Habilidades</a>
@@ -17,29 +16,29 @@
         <a href="/logout">Sair</a>
     </div>
 
-    <h1>Relatório de Habilidades</h1>
+    <div class="container">
+        <h1>Relatório Geral de Habilidades</h1>
+        <p style="text-align: center; color: var(--text-light); margin-bottom: 40px;">
+            Proporção de competências técnicas registradas no sistema.
+        </p>
 
-    <% habilidades.forEach(habilidade => { %>
-
-        <div>
-
-            <h2><%= habilidade.nome %></h2>
-
-            <p>
-                Quantidade de alunos:
-                <%= habilidade.quantidade %>
-            </p>
-
-            <p>
-                Proporção:
-                <%= habilidade.porcentagem %>%
-            </p>
-
+        <div class="recipe-grid">
+            <% habilidades.forEach(h => { %>
+                <div class="recipe-card">
+                    <h3><%= h.nome %></h3>
+                    <p><strong>Quantidade:</strong> <%= h.quantidade %> alunos</p>
+                    
+                    <div style="background: #e2e8f0; border-radius: 10px; height: 20px; width: 100%; margin: 15px 0; overflow: hidden; border: 1px solid #cbd5e1;">
+                        <div style="background: var(--primary); height: 100%; border-radius: 10px; <%= 'width:' + h.porcentagem + '%' %>"></div>
+                    </div>
+                    
+                    <p style="text-align: right; font-size: 13px; font-weight: 600; color: var(--primary);">
+                        <%= h.porcentagem %>% da turma
+                    </p>
+                </div>
+            <% }) %>
         </div>
-
-        <hr>
-
-    <% }) %>
+    </div>
 
 </body>
 </html>

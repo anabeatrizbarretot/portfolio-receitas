@@ -6,7 +6,12 @@
 </head>
 <body>
     <div class="menu">
-        <a href="/receitas">Receitas</a> <a href="/publico">Público</a> <a href="/logout">Sair</a>
+        <a href="/home">Início</a>
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <a href="/logout">Sair</a>
     </div>
 
     <div class="container">
@@ -37,7 +42,7 @@
         <div class="recipe-grid">
             <% receitas.forEach(r => { %>
                 <div class="recipe-card">
-                    <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : 'https://images.unsplash.com/photo-1495195129352-aeb325a55b65?q=80&w=400&h=250&auto=format&fit=crop' %>" alt="<%= r.nome %>">
+                    <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>" alt="<%= r.nome %>">
                     <span class="category-badge"><%= r.categorias || 'Geral' %></span>
                     <h3><%= r.nome %></h3>
                     <div class="card-footer">
