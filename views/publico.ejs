@@ -56,35 +56,37 @@
     </div>
 
     <div id="popupReceita" class="modal">
-        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
-            <span class="close-btn" onclick="fecharPopup()">&times;</span>
-            <img id="popImg" src="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px;">
-            <div style="margin-top: 20px;">
-                <span id="popCategorias" class="category-badge"></span>
-                <h2 id="popTitulo" style="margin-top: 10px;"></h2>
-            </div>
-            <p id="popDesc" style="margin: 20px 0; color: var(--text-muted); line-height: 1.6;"></p>
-            
-            <div style="display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 20px; margin-bottom: 20px;">
-                <a id="popLinkExterno" href="#" target="_blank" class="category-badge" style="background: #10b981; color: white; display:none;">Ver Referência</a>
-                <a id="popLinkEdit" href="#" class="category-badge" style="background: var(--primary); color: white;">Editar Receita</a>
-                <button onclick="fecharPopup()" style="background: #e2e8f0; color: var(--text-main); width: auto;">Fechar</button>
-            </div>
+    <div class="modal-content">
+        <span class="close-btn" onclick="fecharPopup()">&times;</span>
+        
+        <img id="popImg" src="" style="width: 100%; height: 350px; object-fit: cover; border-radius: 12px;">
 
-            <div class="comments-container">
-                <h3>Comentários</h3>
-                <div id="listaComentarios">
-                    </div>
+        <div class="recipe-header">
+            <span id="popCategorias" class="category-badge"></span>
+            <h2 id="popTitulo"></h2>
+            <p id="popDesc" style="color: var(--text-muted); font-size: 1.1rem;"></p>
+        </div>
+        
+        <div class="action-buttons">
+            <a id="popLinkExterno" href="#" target="_blank" class="category-badge" style="background: #10b981; color: white; display:none; padding: 10px 15px;">Ver Referência</a>
+            <a id="popLinkEdit" href="#" class="category-badge" style="background: var(--primary); color: white; padding: 10px 15px;">Editar Receita</a>
+            <button onclick="fecharPopup()" style="background: #e2e8f0; color: var(--text-main); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Fechar</button>
+        </div>
 
-                <hr>
-                <h4>Deixe sua opinião</h4>
-                <form id="formComentario" action="" method="POST" class="comment-form">
+        <div class="comments-container">
+            <h3 style="margin-bottom: 20px;">Comentários</h3>
+            <div id="listaComentarios"></div>
+
+            <div class="comment-form">
+                <h4 style="margin-bottom: 15px;">Deixe sua opinião</h4>
+                <form id="formComentario" action="" method="POST">
                     <input type="text" name="nome" placeholder="Seu nome" required>
                     <textarea name="texto" rows="3" placeholder="O que achou desta receita?" required></textarea>
                     <button type="submit">Enviar Comentário</button>
                 </form>
             </div>
         </div>
+    </div>
     </div>
 
     <script>
