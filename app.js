@@ -5,15 +5,18 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
-// BANCO DE DADOS
-const db = require('./config/db');       // Postgres
-require('./config/mongo');               // MongoDB Atlas
+// --- CONFIGURAÇÕES DE BANCO DE DADOS ---
+const db = require('./config/db');       // PostgreSQL (Dados principais)
+require('./config/mongo');               // MongoDB Atlas (Conexão já corrigida!)
+const Comentario = require('./models/Comentario'); // Importação do Model de Comentários
 
+// --- MIDDLEWARES E VIEW ENGINE ---
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
+// Configuração do Multer (Upload de Fotos das Receitas)
 const uploadDir = './public/uploads';
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -23,13 +26,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+// Configuração de Sessão
 app.use(session({
     secret: 'chave_projeto_1',
     resave: false,
     saveUninitialized: false
 }));
 
-// --- ROTAS ---
+// --- ROTAS DE AUTENTICAÇÃO ---
 app.get('/', (req, res) => res.redirect('/login'));
 app.get('/login', (req, res) => res.render('login'));
 
@@ -40,34 +44,81 @@ app.post('/login', async (req, res) => {
         if (result.rows.length > 0) {
             req.session.usuario = result.rows[0];
             res.redirect('/home');
-        } else { res.send('Erro no login. <a href="/login">Voltar</a>'); }
-    } catch (err) { res.status(500).send('Erro no servidor.'); }
+        } else { 
+            res.send('Erro no login. <a href="/login">Voltar</a>'); 
+        }
+    } catch (err) { 
+        res.status(500).send('Erro no servidor.'); 
+    }
 });
 
 app.get('/home', (req, res) => req.session.usuario ? res.render('index', { usuario: req.session.usuario }) : res.redirect('/login'));
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login'); });
 
-// Portfólio Público
+// --- ROTA PÚBLICA (INTEGRAÇÃO POSTGRES + MONGODB) ---
 app.get('/publico', async (req, res) => {
     const catId = req.query.categoria;
     const busca = req.query.q;
     try {
+        // 1. Busca as receitas no PostgreSQL
         let sql = `SELECT r.*, STRING_AGG(c.nome, ', ') AS categorias FROM receitas r 
                    LEFT JOIN receitas_categorias rc ON r.id = rc.receita_id 
                    LEFT JOIN categorias c ON c.id = rc.categoria_id `;
         let params = [], filtros = [];
-        if (catId) { filtros.push(`r.id IN (SELECT receita_id FROM receitas_categorias WHERE categoria_id = $${params.length + 1})`); params.push(catId); }
-        if (busca) { filtros.push(`(r.nome ILIKE $${params.length + 1} OR r.descricao ILIKE $${params.length + 1})`); params.push(`%${busca}%`); }
+        if (catId) { 
+            filtros.push(`r.id IN (SELECT receita_id FROM receitas_categorias WHERE categoria_id = $${params.length + 1})`); 
+            params.push(catId); 
+        }
+        if (busca) { 
+            filtros.push(`(r.nome ILIKE $${params.length + 1} OR r.descricao ILIKE $${params.length + 1})`); 
+            params.push(`%${busca}%`); 
+        }
         if (filtros.length > 0) sql += " WHERE " + filtros.join(" AND ");
         sql += ` GROUP BY r.id ORDER BY r.id DESC`;
 
-        const receitas = await db.query(sql, params);
+        const receitasResult = await db.query(sql, params);
         const categorias = await db.query('SELECT * FROM categorias ORDER BY nome');
-        res.render('publico', { receitas: receitas.rows, categorias: categorias.rows, categoriaAtiva: catId, termoBusca: busca || '' });
-    } catch (err) { res.send('Erro no público.'); }
+
+        // 2. Busca os comentários no MongoDB Atlas para estas receitas
+        const idsReceitas = receitasResult.rows.map(r => r.id);
+        const todosComentarios = await Comentario.find({ receitaId: { $in: idsReceitas } }).sort({ data: -1 });
+
+        // 3. Une os dados: coloca os comentários dentro de cada objeto de receita
+        const receitasComComentarios = receitasResult.rows.map(receita => {
+            return {
+                ...receita,
+                comentarios: todosComentarios.filter(c => c.receitaId == receita.id)
+            };
+        });
+
+        res.render('publico', { 
+            receitas: receitasComComentarios, 
+            categorias: categorias.rows, 
+            categoriaAtiva: catId, 
+            termoBusca: busca || '' 
+        });
+    } catch (err) { 
+        res.send('Erro ao carregar o portfólio público.'); 
+    }
 });
 
-// CRUD Receitas
+// --- ROTA PARA SALVAR COMENTÁRIOS (MONGODB) ---
+app.post('/receitas/:id/comentarios', async (req, res) => {
+    const { nome, texto } = req.body;
+    const receitaId = req.params.id;
+    try {
+        await Comentario.create({
+            receitaId: receitaId,
+            nome: nome,
+            texto: texto
+        });
+        res.redirect('/publico');
+    } catch (err) {
+        res.status(500).send("Erro ao salvar comentário no Atlas.");
+    }
+});
+
+// --- CRUD DE RECEITAS (POSTGRESQL) ---
 app.get('/receitas', async (req, res) => {
     if (!req.session.usuario) return res.redirect('/login');
     const receitas = await db.query(`SELECT r.*, STRING_AGG(c.nome, ', ') AS categorias FROM receitas r 
@@ -79,7 +130,7 @@ app.get('/receitas', async (req, res) => {
 });
 
 app.post('/receitas', upload.single('imagem'), async (req, res) => {
-    const { nome, descricao, link_externo, categorias, nova_categoria_nome } = req.body;
+    const { nome, descricao, link_externo, categorias } = req.body;
     const img = req.file ? req.file.filename : null;
     try {
         const result = await db.query('INSERT INTO receitas(nome, descricao, link_externo, imagem_url) VALUES($1, $2, $3, $4) RETURNING id', [nome, descricao, link_externo, img]);
@@ -89,10 +140,10 @@ app.post('/receitas', upload.single('imagem'), async (req, res) => {
             for (let c of cats) await db.query('INSERT INTO receitas_categorias VALUES($1, $2)', [rId, c]);
         }
         res.redirect('/receitas');
-    } catch (err) { res.send('Erro ao cadastrar.'); }
+    } catch (err) { res.send('Erro ao cadastrar receita.'); }
 });
 
-// Edição/Exclusão
+// Edição e Exclusão (Postgres)
 app.get('/receitas/editar/:id', async (req, res) => {
     if (!req.session.usuario) return res.redirect('/login');
     const r = await db.query('SELECT * FROM receitas WHERE id = $1', [req.params.id]);
@@ -127,7 +178,7 @@ app.get('/receitas/excluir/:id', async (req, res) => {
     res.redirect('/receitas');
 });
 
-// Habilidades e Relatório
+// --- HABILIDADES E RELATÓRIO (POSTGRESQL) ---
 app.get('/habilidades', async (req, res) => {
     if (!req.session.usuario) return res.redirect('/login');
     const hab = await db.query('SELECT * FROM habilidades ORDER BY nome');
@@ -148,4 +199,5 @@ app.get('/relatorio', async (req, res) => {
     res.render('relatorio', { habilidades: habs });
 });
 
+// --- INICIALIZAÇÃO ---
 app.listen(3000, () => console.log(`🚀 Servidor rodando em http://localhost:3000`));

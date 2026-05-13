@@ -1,30 +1,23 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // <--- O segredo está aqui: importe o pacote direto!
 
 const ComentarioSchema = new mongoose.Schema({
-
-    receita_id: {
-        type: Number,
-        required: true
+    receitaId: { 
+        type: Number, 
+        required: true 
     },
-
-    usuario: {
-        type: String,
-        required: true
+    nome: { 
+        type: String, 
+        required: true 
     },
-
-    texto: {
-        type: String,
-        required: true
+    texto: { 
+        type: String, 
+        required: true 
     },
-
-    data: {
-        type: Date,
-        default: Date.now
+    data: { 
+        type: Date, 
+        default: Date.now 
     }
-
 });
 
-module.exports = mongoose.model(
-    'Comentario',
-    ComentarioSchema
-);
+// Se o modelo já existir, ele usa o existente, senão cria um novo
+module.exports = mongoose.models.Comentario || mongoose.model('Comentario', ComentarioSchema);
