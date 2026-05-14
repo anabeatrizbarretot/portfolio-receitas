@@ -84,8 +84,7 @@
 
     <div id="popup-receita" class="modal"></div>
 
-<script>
-    // Converte os dados do servidor para o navegador
+    <script>
     const receitasData = <%- JSON.stringify(receitas) %>;
 
     function abrirPopup(id) {
@@ -93,17 +92,52 @@
         if (!receita) return;
 
         const modal = document.getElementById('popup-receita');
+        
+        // Gera a lista de comentários em HTML
+        let comentariosHTML = '';
+        if (receita.comentarios && receita.comentarios.length > 0) {
+            receita.comentarios.forEach(c => {
+                comentariosHTML += `
+                    <div class="comentario-item">
+                        <strong>${c.nome}</strong>
+                        <p>${c.texto}</p>
+                        <small>${new Date(c.data).toLocaleDateString('pt-BR')}</small>
+                    </div>
+                `;
+            });
+        } else {
+            comentariosHTML = '<p class="text-muted">Nenhum comentário ainda. Seja o primeiro!</p>';
+        }
+
         modal.innerHTML = `
             <div class="modal-content">
                 <span class="close" onclick="fecharPopup()">&times;</span>
                 <img src="${receita.imagem_url ? '/uploads/' + receita.imagem_url : '/img/padrao.png'}" class="modal-img">
                 <h2>${receita.nome}</h2>
                 <p class="modal-cat">${receita.categorias || 'Geral'}</p>
+                
                 <div class="modal-desc">
                     <p>${receita.descricao.replace(/\n/g, '<br>')}</p>
                 </div>
+
+                <hr class="modal-divider">
+
+                <div class="comments-section">
+                    <h3>Comentários</h3>
+                    <div class="comments-list">
+                        ${comentariosHTML}
+                    </div>
+
+                    <form action="/receitas/${receita.id}/comentarios" method="POST" class="comment-form">
+                        <h4>Deixe seu comentário</h4>
+                        <input type="text" name="nome" placeholder="Seu nome" required>
+                        <textarea name="texto" placeholder="Sua opinião sobre a receita..." required></textarea>
+                        <button type="submit" class="btn-full">Enviar Comentário</button>
+                    </form>
+                </div>
+
                 ${receita.link_externo ? 
-                    `<a href="${receita.link_externo}" target="_blank" class="btn-full" style="display:block; text-align:center;">Ver Referência Externa</a>` 
+                    `<a href="${receita.link_externo}" target="_blank" class="btn-full btn-external">Ver Referência Externa</a>` 
                     : ''}
             </div>
         `;
@@ -119,7 +153,6 @@
         if (event.target == modal) fecharPopup();
     }
 </script>
-
-   
+    
 </body>
 </html>

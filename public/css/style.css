@@ -769,3 +769,73 @@ body {
 
 .modal-cat { color: var(--primary); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; }
 .modal-desc { margin: 20px 0; text-align: left; color: var(--text-main); }
+
+/* --- ESTILOS DE COMENTÁRIOS NO MODAL --- */
+.modal-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+}
+
+.comments-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.comentario-item {
+    background: var(--bg-body);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+}
+
+.comentario-item strong {
+    display: block;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.comentario-item p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+.comentario-item small {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Formulário de Comentário */
+.comment-form {
+    text-align: left;
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.comment-form h4 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.comment-form input, .comment-form textarea {
+    width: 100%;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem;
+}
+
+.btn-external {
+    margin-top: 2rem;
+    background-color: #6366f1;
+}
