@@ -2,60 +2,74 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <title>Painel Principal - Portfólio de Receitas</title>
 </head>
 <body>
-    <div class="menu">
-        <a href="/home">Início</a>
-        <a href="/receitas">Receitas</a>
+    <nav class="menu">
+    <div class="nav-links">
         <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a>
         <a href="/relatorio">Relatório</a>
-        <% if (usuario.e_admin) { %>
-        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+
+        <% if (usuario) { %>
+            <a href="/home">Início</a>
+            <a href="/receitas">Minhas Receitas</a>
+            <a href="/habilidades">Minhas Habilidades</a>
+            
+            <% if (usuario.e_admin) { %>
+                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% } %>
         <% } %>
-        <a href="/logout">Sair</a>
     </div>
+    
+    <div class="nav-auth">
+        <% if (usuario) { %>
+            <span class="user-name">Olá, <%= usuario.nome %></span>
+            <a href="/logout" class="link-sair">Sair</a>
+        <% } else { %>
+            <a href="/login" class="link-login-btn">Login Aluno</a>
+        <% } %>
+    </div>
+    </nav>
 
-    <div class="container">
-        <h1>Bem-vindo, <%= usuario.nome %>!</h1>
-        <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">O que você deseja fazer hoje?</p>
+    <main class="container">
+        <header class="main-header">
+            <h1>Bem-vindo ao seu Portfólio</h1>
+            <p class="subtitle">O que você deseja fazer hoje?</p>
+        </header>
 
-        <div class="recipe-grid">
-            <div class="recipe-card" style="text-align: center; cursor: pointer;" onclick="location.href='/receitas'">
-                <div style="font-size: 50px; margin-bottom: 15px;">🍳</div>
+        <section class="recipe-grid">
+            <div class="recipe-card" onclick="location.href='/receitas'">
+                <div class="card-icon">🍳</div>
                 <h3>Gerenciar Receitas</h3>
                 <p>Cadastre novas criações, edite ou exclua receitas do seu portfólio pessoal.</p>
-                <a href="/receitas" class="category-badge" style="background: var(--primary); color: white;">Acessar</a>
+                <span class="btn-card">Acessar</span>
             </div>
 
-            <div class="recipe-card" style="text-align: center; cursor: pointer;" onclick="location.href='/publico'">
-                <div style="font-size: 50px; margin-bottom: 15px;">🌍</div>
-                <h3>Ver Portfólio Público</h3>
+            <div class="recipe-card" onclick="location.href='/publico'">
+                <div class="card-icon">🌍</div>
+                <h3>Portfólio Público</h3>
                 <p>Veja como as suas receitas e as de seus colegas aparecem para visitantes externos.</p>
-                <a href="/publico" class="category-badge" style="background: var(--primary); color: white;">Explorar</a>
+                <span class="btn-card">Explorar</span>
             </div>
 
-            <div class="recipe-card" style="text-align: center; cursor: pointer;" onclick="location.href='/habilidades'">
-                <div style="font-size: 50px; margin-bottom: 15px;">📊</div>
+            <div class="recipe-card" onclick="location.href='/habilidades'">
+                <div class="card-icon">📊</div>
                 <h3>Minhas Habilidades</h3>
                 <p>Atualize seu nível técnico em diferentes áreas da culinária (Escala 0-10).</p>
-                <a href="/habilidades" class="category-badge" style="background: var(--primary); color: white;">Atualizar</a>
+                <span class="btn-card">Atualizar</span>
             </div>
-            <div class="recipe-grid">
-                <% if (usuario.e_admin) { %>
-                    <div class="recipe-card" style="border: 2px solid var(--primary);">
-                        <div style="font-size: 40px;">⚙️</div>
-                        <h3>Painel do Administrador</h3>
-                        <p>Gerencie alunos, categorias e habilidades do sistema.</p>
-                        <a href="/admin" class="btn-acessar" style="background-color: var(--primary); color: white; display: block; padding: 10px; border-radius: 8px; text-align: center; margin-top: 10px;">
-                            ACESSAR PAINEL
-                        </a>
-                    </div>
-                <% } %>
-            </div>
-        </div>
-    </div>
+
+            <% if (usuario && usuario.e_admin) { %>
+                <div class="recipe-card card-admin" onclick="location.href='/admin'">
+                    <div class="card-icon">⚙️</div>
+                    <h3>Painel Admin</h3>
+                    <p>Gerencie alunos, categorias e as competências técnicas do sistema.</p>
+                    <span class="btn-card btn-admin">Gerenciar Sistema</span>
+                </div>
+            <% } %>
+        </section>
+    </main>
 </body>
 </html>

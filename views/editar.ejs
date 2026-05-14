@@ -1,63 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><link rel="stylesheet" href="/css/style.css">
-    <title>Editar Receita</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Editar Receita - Portfólio</title>
 </head>
 <body>
-    <div class="menu">
-        <a href="/home">Início</a> 
-        <a href="/receitas">Receitas</a> 
+    <nav class="menu">
+    <div class="nav-links">
         <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a> 
-        <a href="/relatorio">Relatório</a> 
-        
-        <% if (usuario.e_admin) { %>
-        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <a href="/relatorio">Relatório</a>
+
+        <% if (usuario) { %>
+            <a href="/home">Início</a>
+            <a href="/receitas">Minhas Receitas</a>
+            <a href="/habilidades">Minhas Habilidades</a>
+            
+            <% if (usuario.e_admin) { %>
+                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% } %>
         <% } %>
-
-        <a href="/logout">Sair</a>
     </div>
+    
+    <div class="nav-auth">
+        <% if (usuario) { %>
+            <span class="user-name">Olá, <%= usuario.nome %></span>
+            <a href="/logout" class="link-sair">Sair</a>
+        <% } else { %>
+            <a href="/login" class="link-login-btn">Login Aluno</a>
+        <% } %>
+    </div>
+    </nav>
 
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <main class="container">
+        <header class="main-header header-flex">
             <h1>Editar Receita</h1>
-            <a href="/receitas" class="category-badge" style="background: var(--nav-bg); color: white;">← Voltar</a>
-        </div>
+            <a href="/receitas" class="btn-back">← Voltar para Minhas Receitas</a>
+        </header>
 
-        <form action="/receitas/editar/<%= receita.id %>" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Nome da Receita</label>
-                <input type="text" name="nome" value="<%= receita.nome %>" required>
+        <section class="form-container">
+            <div class="recipe-card form-edit-card">
+                <form action="/receitas/editar/<%= receita.id %>" method="POST" enctype="multipart/form-data" class="grid-form">
+                    
+                    <div class="form-group">
+                        <label>Nome da Receita</label>
+                        <input type="text" name="nome" value="<%= receita.nome %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição / Ingredientes</label>
+                        <textarea name="descricao" rows="5" required><%= receita.descricao %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Link Externo (Vídeo ou Blog)</label>
+                        <input type="url" name="link_externo" value="<%= receita.link_externo %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Foto da Receita</label>
+                        <div class="image-edit-preview">
+                            <img src="<%= receita.imagem_url ? '/uploads/' + receita.imagem_url : '/img/padrao.png' %>" alt="Atual" class="img-preview">
+                            <div class="file-input-wrapper">
+                                <span class="text-muted">Trocar imagem atual:</span>
+                                <input type="file" name="imagem" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categorias Vinculadas (N:N)</label>
+                        <div class="checkbox-group">
+                            <% categorias.forEach(c => { %>
+                                <label class="check-item">
+                                    <input type="checkbox" name="categorias" value="<%= c.id %>" 
+                                        <%= receita.categorias_ids && receita.categorias_ids.includes(c.id) ? 'checked' : '' %>> 
+                                    <%= c.nome %>
+                                </label>
+                            <% }) %>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-full btn-save">Atualizar Receita</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label>Descrição</label>
-                <textarea name="descricao" required><%= receita.descricao %></textarea>
-            </div>
-            <div class="form-group">
-                <label>Link Externo</label>
-                <input type="text" name="link_externo" value="<%= receita.link_externo %>">
-            </div>
-            <div class="form-group">
-                <label>Foto Atual</label>
-                <img src="<%= receita.imagem_url ? '/uploads/' + receita.imagem_url : '/img/padrao.png' %>" style="width: 150px; border-radius: 8px; display: block; margin-bottom: 10px;">
-                <label>Trocar Foto</label>
-                <input type="file" name="imagem" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label>Categorias</label>
-                <div class="category-selection" style="display: flex; flex-wrap: wrap; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <% categorias.forEach(c => { %>
-                        <label style="cursor:pointer; font-size: 14px;">
-                            <input type="checkbox" name="categorias" value="<%= c.id %>" 
-                                <%= receita.categorias_ids && receita.categorias_ids.includes(c.id) ? 'checked' : '' %>> 
-                            <%= c.nome %>
-                        </label>
-                    <% }) %>
-                </div>
-            </div>
-            <button type="submit">Atualizar Receita</button>
-        </form>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

@@ -2,28 +2,63 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <title>Login - Portfólio de Receitas</title>
 </head>
-<body>
+<body class="bg-login">
+    <nav class="menu">
+    <div class="nav-links">
+        <a href="/publico">Público</a>
+        <a href="/relatorio">Relatório</a>
 
-    <div class="login-container">
-        <h1>Login</h1>
-
-        <form action="/login" method="POST">
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" name="email" placeholder="seu@email.com" required>
-            </div>
-
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" name="senha" placeholder="Sua senha" required>
-            </div>
-
-            <button type="submit">Entrar no Sistema</button>
-        </form>
+        <% if (usuario) { %>
+            <a href="/home">Início</a>
+            <a href="/receitas">Minhas Receitas</a>
+            <a href="/habilidades">Minhas Habilidades</a>
+            
+            <% if (usuario.e_admin) { %>
+                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% } %>
+        <% } %>
     </div>
+    
+    <div class="nav-auth">
+        <% if (usuario) { %>
+            <span class="user-name">Olá, <%= usuario.nome %></span>
+            <a href="/logout" class="link-sair">Sair</a>
+        <% } else { %>
+            <a href="/login" class="link-login-btn">Login Aluno</a>
+        <% } %>
+    </div>
+    </nav>
 
+    <main class="container-center">
+        <div class="recipe-card login-card">
+            <header class="login-header">
+                <div class="login-icon">👨‍🍳</div>
+                <h1>Acesso ao Portfólio</h1>
+                <p class="subtitle">Entre com suas credenciais de aluno</p>
+            </header>
+
+            <form action="/login" method="POST" class="grid-form">
+                <div class="form-group">
+                    <label for="email">E-mail Acadêmico</label>
+                    <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-full btn-login">Entrar no Sistema</button>
+            </form>
+
+            <footer class="login-footer">
+                <p>É um visitante externo? <a href="/publico">Explore as receitas aqui</a></p>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

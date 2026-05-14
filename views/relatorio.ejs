@@ -2,46 +2,67 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Relatório de Habilidades</title>
+    <title>Relatório de Habilidades - Portfólio</title>
 </head>
 <body>
-
-    <div class="menu">
-        <a href="/home">Início</a>
-        <a href="/receitas">Receitas</a>
+    <nav class="menu">
+    <div class="nav-links">
         <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a>
         <a href="/relatorio">Relatório</a>
-        <% if (usuario.e_admin) { %>
-        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+
+        <% if (usuario) { %>
+            <a href="/home">Início</a>
+            <a href="/receitas">Minhas Receitas</a>
+            <a href="/habilidades">Minhas Habilidades</a>
+            
+            <% if (usuario.e_admin) { %>
+                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% } %>
         <% } %>
-        <a href="/logout">Sair</a>
     </div>
+    
+    <div class="nav-auth">
+        <% if (usuario) { %>
+            <span class="user-name">Olá, <%= usuario.nome %></span>
+            <a href="/logout" class="link-sair">Sair</a>
+        <% } else { %>
+            <a href="/login" class="link-login-btn">Login Aluno</a>
+        <% } %>
+    </div>
+    </nav>
 
-    <div class="container">
-        <h1>Relatório Geral de Habilidades</h1>
-        <p style="text-align: center; color: var(--text-light); margin-bottom: 40px;">
-            Proporção de competências técnicas registradas no sistema.
-        </p>
+    <main class="container">
+        <header class="main-header">
+            <h1>Domínio de Habilidades</h1>
+            <p class="subtitle">Proporção de alunos que dominam cada competência cadastrada.</p>
+        </header>
 
-        <div class="recipe-grid">
-            <% habilidades.forEach(h => { %>
-                <div class="recipe-card">
-                    <h3><%= h.nome %></h3>
-                    <p><strong>Quantidade:</strong> <%= h.quantidade %> alunos</p>
-                    
-                    <div style="background: #e2e8f0; border-radius: 10px; height: 20px; width: 100%; margin: 15px 0; overflow: hidden; border: 1px solid #cbd5e1;">
-                        <div style="background: var(--primary); height: 100%; border-radius: 10px; <%= 'width:' + h.porcentagem + '%' %>"></div>
+        <section class="recipe-grid">
+            <% if (habilidades && habilidades.length > 0) { %>
+                <% habilidades.forEach(hab => { %>
+                    <div class="recipe-card stats-card">
+                        <div class="stats-header">
+                            <h3><%= hab.nome %></h3>
+                            <span class="stats-number"><%= hab.porcentagem %>%</span>
+                        </div>
+                        
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: <%= hab.porcentagem %>%"></div>
+                        </div>
+                        
+                        <p class="stats-footer">
+                            <strong><%= hab.quantidade %></strong> alunos dominam esta técnica
+                        </p>
                     </div>
-                    
-                    <p style="text-align: right; font-size: 13px; font-weight: 600; color: var(--primary);">
-                        <%= h.porcentagem %>% da turma
-                    </p>
+                <% }) %>
+            <% } else { %>
+                <div class="no-results">
+                    <p>Nenhuma habilidade cadastrada para gerar o relatório.</p>
                 </div>
-            <% }) %>
-        </div>
-    </div>
-
+            <% } %>
+        </section>
+    </main>
 </body>
 </html>

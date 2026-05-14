@@ -2,48 +2,76 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <title>Gerenciar Habilidades - Admin</title>
 </head>
 <body>
-    <div class="menu">
-        <a href="/home">Início</a> <a href="/receitas">Receitas</a> <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a> <a href="/relatorio">Relatório</a>
-        <% if (usuario.e_admin) { %>
-            <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+    <nav class="menu">
+    <div class="nav-links">
+        <a href="/publico">Público</a>
+        <a href="/relatorio">Relatório</a>
+
+        <% if (usuario) { %>
+            <a href="/home">Início</a>
+            <a href="/receitas">Minhas Receitas</a>
+            <a href="/habilidades">Minhas Habilidades</a>
+            
+            <% if (usuario.e_admin) { %>
+                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% } %>
         <% } %>
-        <a href="/logout">Sair</a>
     </div>
+    
+    <div class="nav-auth">
+        <% if (usuario) { %>
+            <span class="user-name">Olá, <%= usuario.nome %></span>
+            <a href="/logout" class="link-sair">Sair</a>
+        <% } else { %>
+            <a href="/login" class="link-login-btn">Login Aluno</a>
+        <% } %>
+    </div>
+    </nav>
+    
+    <main class="container">
+        <header class="main-header">
+            <h1>Habilidades Técnicas</h1>
+            <p class="subtitle">Catálogo de competências que os alunos podem dominar.</p>
+        </header>
 
-    <div class="container">
-        <h1 style="text-align: center; margin-bottom: 40px;">Habilidades Técnicas</h1>
+        <section class="form-container">
+            <div class="recipe-card form-admin-card">
+                <h3>Cadastrar Competência</h3>
+                <form action="/admin/habilidades" method="POST" class="grid-form">
+                    <div class="form-group">
+                        <label>Nome da Habilidade</label>
+                        <input type="text" name="nome" placeholder="Ex: Confeitaria, Parrilla" required>
+                    </div>
+                    <button type="submit" class="btn-full">Adicionar ao Sistema</button>
+                </form>
+            </div>
+        </section>
 
-        <div class="recipe-card" style="max-width: 500px; margin: 0 auto 40px; padding: 30px;">
-            <h3 style="text-align: center; margin-bottom: 20px;">Cadastrar Competência</h3>
-            <form action="/admin/habilidades" method="POST" style="box-shadow: none; padding: 0; border: none;">
-                <div class="form-group">
-                    <label>Nome da Habilidade</label>
-                    <input type="text" name="nome" placeholder="Ex: Corte de Legumes, Panificação" required>
-                </div>
-                <button type="submit">Adicionar ao Sistema</button>
-            </form>
-        </div>
-
-        <div class="recipe-card">
-            <h3 style="margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Catálogo de Habilidades</h3>
-            <div class="recipe-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+        <section class="list-container">
+            <div class="recipe-grid admin-skill-grid">
                 <% if (habilidades && habilidades.length > 0) { %>
                     <% habilidades.forEach(hab => { %>
-                        <div style="background: var(--bg-body); padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-weight: 500;"><%= hab.nome %></span>
-                            <span style="font-size: 1.1rem;">👨‍🍳</span>
+                        <div class="recipe-card skill-admin-item">
+                            <div class="skill-info">
+                                <span>👨‍🍳</span>
+                                <h4><%= hab.nome %></h4>
+                            </div>
+                            <div class="admin-actions">
+                                <a href="/admin/habilidades/editar/<%= hab.id %>">✏️</a>
+                                <a href="/admin/habilidades/excluir/<%= hab.id %>" onclick="return confirm('Excluir habilidade?')">🗑️</a>
+                            </div>
                         </div>
                     <% }) %>
                 <% } else { %>
-                    <p style="color: var(--text-muted); grid-column: 1 / -1;">Nenhuma habilidade definida.</p>
+                    <p class="text-muted">Nenhuma habilidade cadastrada.</p>
                 <% } %>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

@@ -6,9 +6,9 @@ const fs = require('fs');
 const app = express();
 
 // --- CONFIGURAÇÕES DE BANCO DE DADOS ---
-const db = require('./config/db');       // PostgreSQL
-require('./config/mongo');               // MongoDB Atlas
-const Comentario = require('./models/Comentario'); 
+const db = require('./config/db');       // PostgreSQL (Dados Principais)
+require('./config/mongo');               // MongoDB Atlas (Conexão)
+const Comentario = require('./models/Comentario'); // Model de Comentários
 
 // --- MIDDLEWARES E VIEW ENGINE ---
 app.set('view engine', 'ejs');
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// Configuração de Upload
+// Configuração do Multer (Upload de Fotos)
 const uploadDir = './public/uploads';
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -51,7 +51,7 @@ function verificarAdmin(req, res, next) {
     res.status(403).send("Acesso Negado: Área exclusiva para administradores.");
 }
 
-// --- ROTAS DE AUTENTICAÇÃO ---
+// --- ROTAS DE AUTENTICAÇÃO (REQUISITO 1.1) ---
 app.get('/', (req, res) => res.redirect('/login'));
 app.get('/login', (req, res) => res.render('login'));
 
@@ -100,7 +100,7 @@ app.get('/admin/alunos/excluir/:id', verificarAdmin, async (req, res) => {
     } catch (err) { res.send("Erro ao excluir."); }
 });
 
-// 2. Gerenciar Categorias (Admin)
+// 2. Gerenciar Categorias
 app.get('/admin/categorias', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM categorias ORDER BY nome');
     res.render('admin/categorias', { categorias: result.rows });
@@ -111,7 +111,7 @@ app.post('/admin/categorias', verificarAdmin, async (req, res) => {
     res.redirect('/admin/categorias');
 });
 
-// 3. Gerenciar Catálogo de Habilidades (Admin)
+// 3. Gerenciar Habilidades (Catálogo)
 app.get('/admin/habilidades', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM habilidades ORDER BY nome');
     res.render('admin/habilidades', { habilidades: result.rows });
@@ -122,7 +122,7 @@ app.post('/admin/habilidades', verificarAdmin, async (req, res) => {
     res.redirect('/admin/habilidades');
 });
 
-// --- ROTA PÚBLICA (RECEITAS + COMENTÁRIOS ATLAS) ---
+// --- ROTA PÚBLICA (REQUISITO 1.7 e 1.8) ---
 app.get('/publico', async (req, res) => {
     const catId = req.query.categoria;
     const busca = req.query.q;
@@ -155,6 +155,7 @@ app.get('/publico', async (req, res) => {
     } catch (err) { res.send('Erro ao carregar portfólio.'); }
 });
 
+// Comentários MongoDB Atlas (Requisito 1.8)
 app.post('/receitas/:id/comentarios', async (req, res) => {
     await Comentario.create({ receitaId: req.params.id, nome: req.body.nome, texto: req.body.texto });
     res.redirect('/publico');
@@ -191,6 +192,7 @@ app.post('/receitas', verificarAutenticacao, upload.single('imagem'), async (req
             for (let c of cats) await db.query('INSERT INTO receitas_categorias VALUES($1, $2)', [rId, c]);
         }
 
+        // Requisito 1.3: Vincula o criador e outros autores
         await db.query('INSERT INTO receitas_alunos VALUES($1, $2)', [rId, req.session.usuario.id]);
         if (autores) {
             const outr = Array.isArray(autores) ? autores : [autores];
@@ -199,7 +201,36 @@ app.post('/receitas', verificarAutenticacao, upload.single('imagem'), async (req
             }
         }
         res.redirect('/receitas');
-    } catch (err) { res.send('Erro ao cadastrar.'); }
+    } catch (err) { res.send('Erro detalhado: ' + err.message); }
+});
+
+// Edição de Receita (Requisito 1.5)
+app.get('/receitas/editar/:id', verificarAutenticacao, async (req, res) => {
+    const r = await db.query('SELECT * FROM receitas WHERE id = $1', [req.params.id]);
+    const cats = await db.query('SELECT * FROM categorias ORDER BY nome');
+    const linked = await db.query('SELECT categoria_id FROM receitas_categorias WHERE receita_id = $1', [req.params.id]);
+    const receita = r.rows[0];
+    receita.categorias_ids = linked.rows.map(row => row.categoria_id);
+    res.render('editar', { receita, categorias: cats.rows });
+});
+
+app.post('/receitas/editar/:id', verificarAutenticacao, upload.single('imagem'), async (req, res) => {
+    const { nome, descricao, link_externo, categorias } = req.body;
+    const id = req.params.id;
+    try {
+        let sql = 'UPDATE receitas SET nome=$1, descricao=$2, link_externo=$3';
+        let params = [nome, descricao, link_externo];
+        if (req.file) { sql += ', imagem_url=$4 WHERE id=$5'; params.push(req.file.filename, id); }
+        else { sql += ' WHERE id=$4'; params.push(id); }
+        
+        await db.query(sql, params);
+        await db.query('DELETE FROM receitas_categorias WHERE receita_id = $1', [id]);
+        if (categorias) {
+            const cats = Array.isArray(categorias) ? categorias : [categorias];
+            for (let c of cats) await db.query('INSERT INTO receitas_categorias VALUES($1, $2)', [id, c]);
+        }
+        res.redirect('/receitas');
+    } catch (err) { res.send('Erro ao editar.'); }
 });
 
 app.get('/receitas/excluir/:id', verificarAutenticacao, async (req, res) => {

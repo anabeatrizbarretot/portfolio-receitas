@@ -2,145 +2,124 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Portfólio Público</title>
-    <style>
-        /* Pequenos ajustes para a área de comentários no seu layout */
-        .comments-container { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; text-align: left; }
-        .comment-item { background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
-        .comment-item strong { color: var(--primary); display: block; margin-bottom: 3px; }
-        .comment-form input, .comment-form textarea { width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid var(--border); border-radius: 5px; }
-        .comment-form button { background: var(--primary); color: white; cursor: pointer; border: none; padding: 10px 20px; border-radius: 5px; }
-    </style>
+    <title>Portfólio Público - Receitas</title>
 </head>
 <body>
-    <div class="menu">
-        <a href="/home">Início</a> 
-        <a href="/receitas">Receitas</a> 
-        <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a> 
-        <a href="/relatorio">Relatório</a> 
-        <% if (usuario.e_admin) { %>
-        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
-        <% } %>
-        <a href="/logout">Sair</a>
-    </div>
+    <nav class="menu">
+        <div class="nav-links">
+            <a href="/publico">Público</a>
+            <a href="/relatorio">Relatório</a>
 
-    <div class="container">
-        <h1>Receitas dos Alunos</h1>
-
-        <form action="/publico" method="GET" class="search-container">
-            <input type="text" name="q" placeholder="Pesquisar por ingrediente ou nome..." value="<%= termoBusca %>">
-            <button type="submit">Buscar</button>
-        </form>
-
-        <div style="text-align:center; margin-bottom: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-            <a href="/publico" class="category-badge <%= !categoriaAtiva ? 'active-category' : '' %>">Todas</a>
-            
-            <% categorias.forEach(c => { %>
-                <a href="/publico?categoria=<%= c.id %><%= termoBusca ? '&q=' + termoBusca : '' %>" 
-                   class="category-badge <%= categoriaAtiva == c.id ? 'active-category' : '' %>">
-                    <%= c.nome %>
-                </a>
-            <% }) %>
-        </div>
-
-        <div class="recipe-grid">
-            <% receitas.forEach(r => { %>
-                <div class="recipe-card">
-                    <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>" alt="<%= r.nome %>">
-                    <span class="category-badge"><%= r.categorias %></span>
-                    <h3><%= r.nome %></h3>
-                    <div class="card-footer">
-                        <button onclick="abrirPopup('<%= r.id %>', '<%= r.nome.replace(/'/g, "\\'") %>', '<%= r.descricao.replace(/\r?\n/g, '<br>').replace(/'/g, "\\'") %>', '<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>', '/receitas/editar/<%= r.id %>', '<%= r.categorias %>', '<%= r.link_externo %>', '<%= JSON.stringify(r.comentarios).replace(/'/g, "\\'") %>')" 
-                                style="background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer;">
-                            Ver Detalhes
-                        </button>
-                    </div>
-                </div>
-            <% }) %>
-        </div>
-    </div>
-
-    <div id="popupReceita" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="fecharPopup()">&times;</span>
-        
-        <img id="popImg" src="" style="width: 100%; height: 350px; object-fit: cover; border-radius: 12px;">
-
-        <div class="recipe-header">
-            <span id="popCategorias" class="category-badge"></span>
-            <h2 id="popTitulo"></h2>
-            <p id="popDesc" style="color: var(--text-muted); font-size: 1.1rem;"></p>
+            <% if (usuario) { %>
+                <a href="/home">Início</a>
+                <a href="/receitas">Minhas Receitas</a>
+                <a href="/habilidades">Minhas Habilidades</a>
+                
+                <% if (usuario.e_admin) { %>
+                    <a href="/admin" class="link-admin">Painel Admin</a>
+                <% } %>
+            <% } %>
         </div>
         
-        <div class="action-buttons">
-            <a id="popLinkExterno" href="#" target="_blank" class="category-badge" style="background: #10b981; color: white; display:none; padding: 10px 15px;">Ver Referência</a>
-            <a id="popLinkEdit" href="#" class="category-badge" style="background: var(--primary); color: white; padding: 10px 15px;">Editar Receita</a>
-            <button onclick="fecharPopup()" style="background: #e2e8f0; color: var(--text-main); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Fechar</button>
+        <div class="nav-auth">
+            <% if (usuario) { %>
+                <span class="user-name">Olá, <%= usuario.nome %></span>
+                <a href="/logout" class="link-sair">Sair</a>
+            <% } else { %>
+                <a href="/login" class="link-login-btn">Login Aluno</a>
+            <% } %>
         </div>
+    </nav>
 
-        <div class="comments-container">
-            <h3 style="margin-bottom: 20px;">Comentários</h3>
-            <div id="listaComentarios"></div>
+    <main class="container">
+        <header class="main-header">
+            <h1>Explorar Receitas</h1>
+            <p class="subtitle">Criações gastronômicas dos alunos de São Sebastião da Amoreira.</p>
+        </header>
 
-            <div class="comment-form">
-                <h4 style="margin-bottom: 15px;">Deixe sua opinião</h4>
-                <form id="formComentario" action="" method="POST">
-                    <input type="text" name="nome" placeholder="Seu nome" required>
-                    <textarea name="texto" rows="3" placeholder="O que achou desta receita?" required></textarea>
-                    <button type="submit">Enviar Comentário</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    </div>
+        <section class="search-section">
+            <form action="/publico" method="GET" class="search-container">
+                <input type="text" name="q" placeholder="Procurar receita..." value="<%= termoBusca %>">
+                
+                <select name="categoria" onchange="this.form.submit()">
+                    <option value="">Todas as Categorias</option>
+                    <% categorias.forEach(cat => { %>
+                        <option value="<%= cat.id %>" <%= categoriaAtiva == cat.id ? 'selected' : '' %>>
+                            <%= cat.nome %>
+                        </option>
+                    <% }) %>
+                </select>
+                
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
 
-    <script>
-        function abrirPopup(id, titulo, descricao, imagem, linkEdit, categorias, linkExterno, comentariosJSON) {
-            document.getElementById('popTitulo').innerText = titulo;
-            document.getElementById('popDesc').innerHTML = descricao;
-            document.getElementById('popImg').src = imagem;
-            document.getElementById('popLinkEdit').href = linkEdit;
-            document.getElementById('popCategorias').innerText = categorias || 'Geral';
-
-            // Configura o destino do formulário de comentário com o ID da receita
-            document.getElementById('formComentario').action = `/receitas/${id}/comentarios`;
-
-            // Lógica do Link Externo
-            const btnLink = document.getElementById('popLinkExterno');
-            if (linkExterno && linkExterno !== 'null' && linkExterno !== '') {
-                btnLink.href = linkExterno;
-                btnLink.style.display = 'inline-block';
-            } else {
-                btnLink.style.display = 'none';
-            }
-
-            // Lógica para exibir comentários do MongoDB
-            const lista = document.getElementById('listaComentarios');
-            lista.innerHTML = ''; // Limpa comentários da receita anterior
-            
-            const comentarios = JSON.parse(comentariosJSON);
-
-            if (comentarios.length > 0) {
-                comentarios.forEach(c => {
-                    const data = new Date(c.data).toLocaleDateString('pt-BR');
-                    lista.innerHTML += `
-                        <div class="comment-item">
-                            <strong>${c.nome}</strong>
-                            <p style="margin:0;">${c.texto}</p>
-                            <small style="color: #94a3b8;">${data}</small>
+        <section class="recipe-grid">
+            <% if (receitas && receitas.length > 0) { %>
+                <% receitas.forEach(r => { %>
+                    <div class="recipe-card public-item">
+                        <div class="card-img-wrapper">
+                            <img src="<%= r.imagem_url ? '/uploads/' + r.imagem_url : '/img/padrao.png' %>" alt="Foto">
+                            <span class="badge-autor">Por: <%= r.autores || 'Autor Desconhecido' %></span>
                         </div>
-                    `;
-                });
-            } else {
-                lista.innerHTML = '<p style="color: #94a3b8;">Nenhum comentário ainda. Seja o primeiro!</p>';
-            }
+                        <div class="card-info">
+                            <span class="cat-tag"><%= r.categorias || 'Geral' %></span>
+                            <h4><%= r.nome %></h4>
+                            <p class="desc-preview"><%= r.descricao.substring(0, 80) %>...</p>
+                            
+                            <button class="btn-details" onclick="abrirPopup('<%= r.id %>')">Ver Receita Completa</button>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="no-results">
+                    <p>Nenhuma receita encontrada.</p>
+                    <a href="/publico">Ver todas</a>
+                </div>
+            <% } %>
+        </section>
+    </main>
 
-            document.getElementById('popupReceita').style.display = 'flex';
-        }
+    <div id="popup-receita" class="modal"></div>
 
-        function fecharPopup() { document.getElementById('popupReceita').style.display = 'none'; }
-    </script>
+<script>
+    // Converte os dados do servidor para o navegador
+    const receitasData = <%- JSON.stringify(receitas) %>;
+
+    function abrirPopup(id) {
+        const receita = receitasData.find(r => r.id == id);
+        if (!receita) return;
+
+        const modal = document.getElementById('popup-receita');
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close" onclick="fecharPopup()">&times;</span>
+                <img src="${receita.imagem_url ? '/uploads/' + receita.imagem_url : '/img/padrao.png'}" class="modal-img">
+                <h2>${receita.nome}</h2>
+                <p class="modal-cat">${receita.categorias || 'Geral'}</p>
+                <div class="modal-desc">
+                    <p>${receita.descricao.replace(/\n/g, '<br>')}</p>
+                </div>
+                ${receita.link_externo ? 
+                    `<a href="${receita.link_externo}" target="_blank" class="btn-full" style="display:block; text-align:center;">Ver Referência Externa</a>` 
+                    : ''}
+            </div>
+        `;
+        modal.style.display = "flex";
+    }
+
+    function fecharPopup() {
+        document.getElementById('popup-receita').style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('popup-receita');
+        if (event.target == modal) fecharPopup();
+    }
+</script>
+
+   
 </body>
 </html>

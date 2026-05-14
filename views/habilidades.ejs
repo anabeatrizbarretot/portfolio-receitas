@@ -2,51 +2,83 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Minhas Habilidades</title>
+    <title>Minhas Habilidades - Portfólio</title>
 </head>
 <body>
-    <div class="menu">
-        <a href="/home">Início</a> <a href="/receitas">Receitas</a> <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a> <a href="/relatorio">Relatório</a>
-        <% if (usuario.e_admin) { %>
-            <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+    <nav class="menu">
+    <div class="nav-links">
+        <a href="/publico">Público</a>
+        <a href="/relatorio">Relatório</a>
+
+        <% if (usuario) { %>
+            <a href="/home">Início</a>
+            <a href="/receitas">Minhas Receitas</a>
+            <a href="/habilidades">Minhas Habilidades</a>
+            
+            <% if (usuario.e_admin) { %>
+                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% } %>
         <% } %>
-        <a href="/logout">Sair</a>
     </div>
+    
+    <div class="nav-auth">
+        <% if (usuario) { %>
+            <span class="user-name">Olá, <%= usuario.nome %></span>
+            <a href="/logout" class="link-sair">Sair</a>
+        <% } else { %>
+            <a href="/login" class="link-login-btn">Login Aluno</a>
+        <% } %>
+    </div>
+    </nav>
 
-    <div class="container">
-        <h1>Minhas Habilidades Culinárias</h1>
+    <main class="container">
+        <header class="main-header">
+            <h1>Minhas Habilidades Culinárias</h1>
+            <p class="subtitle">Defina o seu nível técnico nas competências do sistema.</p>
+        </header>
 
-        <form action="/habilidades" method="POST" style="max-width: 600px;">
-            <h3>Atualizar Meu Nível</h3>
-            <div class="form-group">
-                <label>Selecione a Habilidade</label>
-                <select name="habilidade_id" required>
-                    <option value="">-- Escolha uma habilidade --</option>
-                    <% habilidades.forEach(hab => { %>
-                        <option value="<%= hab.id %>"><%= hab.nome %></option>
-                    <% }) %>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Seu Nível (Escala 0 a 10)</label>
-                <input type="number" name="nivel" min="0" max="10" placeholder="Ex: 8" required>
-            </div>
-            <button type="submit">Salvar Nível</button>
-        </form>
-
-        <div class="recipe-grid" style="margin-top: 40px;">
-            <% minhasHabilidades.forEach(minha => { %>
-                <div class="recipe-card" style="text-align: center;">
-                    <h2 style="color: var(--primary);"><%= minha.nivel %>/10</h2>
-                    <h4><%= minha.nome %></h4>
-                    <div style="background: #eee; border-radius: 10px; height: 10px; margin-top: 10px;">
-                        <div style="background: var(--primary); width: <%= minha.nivel * 10 %>%; height: 100%; border-radius: 10px;"></div>
+        <section class="form-container">
+            <div class="recipe-card form-skill-card">
+                <h3>Atualizar Meu Nível</h3>
+                <form action="/habilidades" method="POST" class="grid-form">
+                    <div class="form-group">
+                        <label>Selecione a Habilidade</label>
+                        <select name="habilidade_id" required>
+                            <option value="">-- Escolha uma competência --</option>
+                            <% habilidades.forEach(hab => { %>
+                                <option value="<%= hab.id %>"><%= hab.nome %></option>
+                            <% }) %>
+                        </select>
                     </div>
-                </div>
-            <% }) %>
-        </div>
-    </div>
+
+                    <div class="form-group">
+                        <label>Seu Nível (Escala 0 a 10)</label>
+                        <input type="number" name="nivel" min="0" max="10" placeholder="Ex: 8" required>
+                    </div>
+
+                    <button type="submit" class="btn-full btn-save">Salvar Habilidade</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="list-container">
+            <div class="recipe-grid">
+                <% minhasHabilidades.forEach(minha => { %>
+                    <div class="recipe-card skill-card">
+                        <div class="skill-header">
+                            <h4><%= minha.nome %></h4>
+                            <span class="skill-score"><%= minha.nivel %> / 10</span>
+                        </div>
+                        
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: <%= minha.nivel * 10 %>%"></div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
