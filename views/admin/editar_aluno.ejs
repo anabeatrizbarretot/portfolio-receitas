@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Editar Aluno - Admin</title>
+</head>
+<body>
+    <!-- Navbar Padronizada -->
+    <nav class="menu">
+        <div class="nav-links">
+            <a href="/publico">Público</a>
+            <a href="/relatorio">Relatório</a>
+            <% if (usuario) { %>
+                <a href="/home">Início</a>
+                <a href="/receitas">Minhas Receitas</a>
+                <a href="/habilidades">Minhas Habilidades</a>
+                <% if (usuario.e_admin) { %>
+                    <a href="/admin" class="link-admin">Painel Admin</a>
+                <% } %>
+            <% } %>
+        </div>
+        <div class="nav-auth">
+            <% if (usuario) { %>
+                <span class="user-name">Olá, <%= usuario.nome %></span>
+                <a href="/logout" class="link-sair">Sair</a>
+            <% } else { %>
+                <a href="/login" class="link-login-btn">Login Aluno</a>
+            <% } %>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="main-header header-flex">
+            <h1>Editar Aluno</h1>
+            <a href="/admin/alunos" class="btn-back">← Voltar para Alunos</a>
+        </header>
+
+        <section class="form-container">
+            <div class="recipe-card form-edit-card">
+                <h3>Dados de <%= aluno.nome %></h3>
+                <form action="/admin/alunos/editar/<%= aluno.id %>" method="POST" class="grid-form">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" name="nome" value="<%= aluno.nome %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>E-mail Académico</label>
+                        <input type="email" name="email" value="<%= aluno.email %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Senha de Acesso</label>
+                        <input type="password" name="senha" value="<%= aluno.senha %>" required>
+                    </div>
+
+                    <div class="form-group-inline">
+                        <input type="checkbox" name="e_admin" id="e_admin" <%= aluno.e_admin ? 'checked' : '' %>>
+                        <label for="e_admin" style="margin: 0;">Conceder privilégios de Administrador</label>
+                    </div>
+
+                    <button type="submit" class="btn-full btn-save">Salvar Alterações</button>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

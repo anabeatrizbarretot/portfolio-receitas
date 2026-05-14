@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Editar Categoria - Admin</title>
+</head>
+<body>
+    <!-- Navbar Padronizada -->
+    <nav class="menu">
+        <div class="nav-links">
+            <a href="/publico">Público</a>
+            <a href="/relatorio">Relatório</a>
+            <% if (usuario) { %>
+                <a href="/home">Início</a>
+                <a href="/receitas">Minhas Receitas</a>
+                <a href="/habilidades">Minhas Habilidades</a>
+                <% if (usuario.e_admin) { %>
+                    <a href="/admin" class="link-admin">Painel Admin</a>
+                <% } %>
+            <% } %>
+        </div>
+        <div class="nav-auth">
+            <% if (usuario) { %>
+                <span class="user-name">Olá, <%= usuario.nome %></span>
+                <a href="/logout" class="link-sair">Sair</a>
+            <% } else { %>
+                <a href="/login" class="link-login-btn">Login Aluno</a>
+            <% } %>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="main-header header-flex">
+            <h1>Editar Categoria</h1>
+            <a href="/admin/categorias" class="btn-back">← Voltar para Categorias</a>
+        </header>
+
+        <section class="form-container">
+            <div class="recipe-card form-edit-card">
+                <h3>Renomear Categoria</h3>
+                <form action="/admin/categorias/editar/<%= categoria.id %>" method="POST" class="grid-form">
+                    <div class="form-group">
+                        <label>Nome da Categoria</label>
+                        <input type="text" name="nome" value="<%= categoria.nome %>" required>
+                    </div>
+
+                    <button type="submit" class="btn-full btn-save">Atualizar Nome</button>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

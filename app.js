@@ -6,9 +6,9 @@ const fs = require('fs');
 const app = express();
 
 // --- CONFIGURAÇÕES DE BANCO DE DADOS ---
-const db = require('./config/db');       // PostgreSQL (Dados Principais)
-require('./config/mongo');               // MongoDB Atlas (Conexão)
-const Comentario = require('./models/Comentario'); // Model de Comentários
+const db = require('./config/db');       // PostgreSQL
+require('./config/mongo');               // MongoDB Atlas
+const Comentario = require('./models/Comentario'); 
 
 // --- MIDDLEWARES E VIEW ENGINE ---
 app.set('view engine', 'ejs');
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// Configuração do Multer (Upload de Fotos)
+// Configuração de Upload
 const uploadDir = './public/uploads';
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -76,7 +76,7 @@ app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login')
 // --- ÁREA DO ADMINISTRADOR (REQUISITO 1.6) ---
 app.get('/admin', verificarAdmin, (req, res) => res.render('admin/dashboard'));
 
-// 1. Gerenciar Alunos
+// 1. Gerenciar Alunos (CRUD Completo)
 app.get('/admin/alunos', verificarAdmin, async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM alunos ORDER BY nome');
@@ -93,6 +93,31 @@ app.post('/admin/alunos', verificarAdmin, async (req, res) => {
     } catch (err) { res.send("Erro ao cadastrar: " + err.message); }
 });
 
+// Rota de Edição de Aluno (Resolve erro de "Cannot GET /admin/alunos/editar/...")
+app.get('/admin/alunos/editar/:id', verificarAdmin, async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM alunos WHERE id = $1', [req.params.id]);
+        res.render('admin/editar_aluno', { aluno: result.rows[0] });
+    } catch (err) { res.send("Erro ao carregar edição de aluno."); }
+});
+
+app.post('/admin/alunos/editar/:id', verificarAdmin, async (req, res) => {
+    const { nome, email, senha, e_admin } = req.body;
+    const adminFlag = e_admin === 'on';
+    try {
+        await db.query('UPDATE alunos SET nome=$1, email=$2, senha=$3, e_admin=$4 WHERE id=$5', 
+            [nome, email, senha, adminFlag, req.params.id]);
+
+        // SE O USUÁRIO EDITADO FOR O QUE ESTÁ LOGADO, ATUALIZA A SESSÃO
+        if (req.session.usuario.id == req.params.id) {
+            req.session.usuario.nome = nome;
+            req.session.usuario.e_admin = adminFlag;
+        }
+
+        res.redirect('/admin/alunos');
+    } catch (err) { res.send("Erro ao salvar aluno."); }
+});
+
 app.get('/admin/alunos/excluir/:id', verificarAdmin, async (req, res) => {
     try {
         await db.query('DELETE FROM alunos WHERE id = $1', [req.params.id]);
@@ -100,7 +125,7 @@ app.get('/admin/alunos/excluir/:id', verificarAdmin, async (req, res) => {
     } catch (err) { res.send("Erro ao excluir."); }
 });
 
-// 2. Gerenciar Categorias
+// 2. Gerenciar Categorias (CRUD Completo)
 app.get('/admin/categorias', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM categorias ORDER BY nome');
     res.render('admin/categorias', { categorias: result.rows });
@@ -111,7 +136,19 @@ app.post('/admin/categorias', verificarAdmin, async (req, res) => {
     res.redirect('/admin/categorias');
 });
 
-// 3. Gerenciar Habilidades (Catálogo)
+app.get('/admin/categorias/editar/:id', verificarAdmin, async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM categorias WHERE id = $1', [req.params.id]);
+        res.render('admin/editar_categoria', { categoria: result.rows[0] });
+    } catch (err) { res.send("Erro ao carregar categoria."); }
+});
+
+app.post('/admin/categorias/editar/:id', verificarAdmin, async (req, res) => {
+    await db.query('UPDATE categorias SET nome=$1 WHERE id=$2', [req.body.nome, req.params.id]);
+    res.redirect('/admin/categorias');
+});
+
+// 3. Gerenciar Habilidades (CRUD Completo)
 app.get('/admin/habilidades', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM habilidades ORDER BY nome');
     res.render('admin/habilidades', { habilidades: result.rows });
@@ -119,6 +156,16 @@ app.get('/admin/habilidades', verificarAdmin, async (req, res) => {
 
 app.post('/admin/habilidades', verificarAdmin, async (req, res) => {
     await db.query('INSERT INTO habilidades(nome) VALUES($1)', [req.body.nome]);
+    res.redirect('/admin/habilidades');
+});
+
+app.get('/admin/habilidades/editar/:id', verificarAdmin, async (req, res) => {
+    const result = await db.query('SELECT * FROM habilidades WHERE id = $1', [req.params.id]);
+    res.render('admin/editar_habilidade', { habilidade: result.rows[0] });
+});
+
+app.post('/admin/habilidades/editar/:id', verificarAdmin, async (req, res) => {
+    await db.query('UPDATE habilidades SET nome=$1 WHERE id=$2', [req.body.nome, req.params.id]);
     res.redirect('/admin/habilidades');
 });
 
