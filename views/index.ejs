@@ -12,6 +12,9 @@
         <a href="/publico">Público</a>
         <a href="/habilidades">Habilidades</a>
         <a href="/relatorio">Relatório</a>
+        <% if (usuario.e_admin) { %>
+        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <% } %>
         <a href="/logout">Sair</a>
     </div>
 
@@ -39,6 +42,18 @@
                 <h3>Minhas Habilidades</h3>
                 <p>Atualize seu nível técnico em diferentes áreas da culinária (Escala 0-10).</p>
                 <a href="/habilidades" class="category-badge" style="background: var(--primary); color: white;">Atualizar</a>
+            </div>
+            <div class="recipe-grid">
+                <% if (usuario.e_admin) { %>
+                    <div class="recipe-card" style="border: 2px solid var(--primary);">
+                        <div style="font-size: 40px;">⚙️</div>
+                        <h3>Painel do Administrador</h3>
+                        <p>Gerencie alunos, categorias e habilidades do sistema.</p>
+                        <a href="/admin" class="btn-acessar" style="background-color: var(--primary); color: white; display: block; padding: 10px; border-radius: 8px; text-align: center; margin-top: 10px;">
+                            ACESSAR PAINEL
+                        </a>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>

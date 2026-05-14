@@ -13,6 +13,9 @@
         <a href="/publico">Público</a>
         <a href="/habilidades">Habilidades</a>
         <a href="/relatorio">Relatório</a>
+        <% if (usuario.e_admin) { %>
+        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <% } %>
         <a href="/logout">Sair</a>
     </div>
 

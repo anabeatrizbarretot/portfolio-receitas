@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Painel Administrativo</title>
+</head>
+<body>
+    <div class="menu">
+        <a href="/home">Início</a>
+        <a href="/receitas">Receitas</a>
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a>
+        <a href="/relatorio">Relatório</a>
+        <% if (usuario.e_admin) { %>
+        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <% } %>
+        <a href="/logout">Sair</a>
+    </div>
+
+    <div class="container">
+        <h1>Painel do Administrador</h1>
+        <p style="text-align: center;">Bem-vindo, <%= usuario.nome %>! O que deseja gerenciar hoje?</p>
+
+        <div class="recipe-grid" style="margin-top: 40px;">
+            <div class="recipe-card" style="text-align: center;">
+                <h3>Alunos</h3>
+                <p>Gerenciar quem tem acesso ao sistema.</p>
+                <a href="/admin/alunos" class="category-badge" style="background: var(--primary); color: white; margin-top: 15px;">Acessar</a>
+            </div>
+
+            <div class="recipe-card" style="text-align: center;">
+                <h3>Categorias</h3>
+                <p>Configurar os tipos de receitas disponíveis.</p>
+                <a href="/admin/categorias" class="category-badge" style="background: var(--primary); color: white; margin-top: 15px;">Acessar</a>
+            </div>
+
+            <div class="recipe-card" style="text-align: center;">
+                <h3>Habilidades</h3>
+                <p>Cadastrar as competências culinárias.</p>
+                <a href="/admin/habilidades" class="category-badge" style="background: var(--primary); color: white; margin-top: 15px;">Acessar</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

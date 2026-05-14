@@ -15,8 +15,15 @@
 </head>
 <body>
     <div class="menu">
-        <a href="/home">Início</a> <a href="/receitas">Receitas</a> <a href="/publico">Público</a>
-        <a href="/habilidades">Habilidades</a> <a href="/relatorio">Relatório</a> <a href="/logout">Sair</a>
+        <a href="/home">Início</a> 
+        <a href="/receitas">Receitas</a> 
+        <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a> 
+        <a href="/relatorio">Relatório</a> 
+        <% if (usuario.e_admin) { %>
+        <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <% } %>
+        <a href="/logout">Sair</a>
     </div>
 
     <div class="container">
