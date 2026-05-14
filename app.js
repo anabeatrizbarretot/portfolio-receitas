@@ -1,3 +1,6 @@
+/**
+ * IMPORTAÇÃO DE MÓDULOS E DEPENDÊNCIAS
+ */
 const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
@@ -5,18 +8,24 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
-// --- CONFIGURAÇÕES DE BANCO DE DADOS ---
-const db = require('./config/db');       // PostgreSQL
-require('./config/mongo');               // MongoDB Atlas
+/**
+ * CONFIGURAÇÕES DE CONEXÃO COM BANCO DE DADOS
+ */
+const db = require('./config/db');       // PostgreSQL (Relacional)
+require('./config/mongo');               // MongoDB Atlas (Não-relacional)
 const Comentario = require('./models/Comentario'); 
 
-// --- MIDDLEWARES E VIEW ENGINE ---
+/**
+ * CONFIGURAÇÕES DE VIEW ENGINE E MIDDLEWARES BÁSICOS
+ */
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// Configuração de Upload
+/**
+ * CONFIGURAÇÃO DO MULTER PARA GERENCIAMENTO DE UPLOADS
+ */
 const uploadDir = './public/uploads';
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -26,21 +35,26 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Configuração de Sessão
+/**
+ * CONFIGURAÇÃO DE SESSÕES DE USUÁRIO
+ */
 app.use(session({
     secret: 'chave_projeto_1',
     resave: false,
     saveUninitialized: false
 }));
 
-// --- [CRÍTICO] MIDDLEWARE GLOBAL PARA EJS ---
-// Garante que a variável 'usuario' exista em todos os arquivos .ejs
+/**
+ * MIDDLEWARE GLOBAL PARA DISPONIBILIZAR DADOS DA SESSÃO NO EJS
+ */
 app.use((req, res, next) => {
     res.locals.usuario = req.session.usuario || null;
     next();
 });
 
-// --- MIDDLEWARES DE SEGURANÇA (AUTORIZAÇÃO) ---
+/**
+ * MIDDLEWARES DE CONTROLE DE ACESSO E SEGURANÇA
+ */
 function verificarAutenticacao(req, res, next) {
     if (req.session.usuario) return next();
     res.redirect('/login');
@@ -51,7 +65,9 @@ function verificarAdmin(req, res, next) {
     res.status(403).send("Acesso Negado: Área exclusiva para administradores.");
 }
 
-// --- ROTAS DE AUTENTICAÇÃO (REQUISITO 1.1) ---
+/**
+ * ROTAS DE AUTENTICAÇÃO (LOGIN, LOGOUT E HOME)
+ */
 app.get('/', (req, res) => res.redirect('/login'));
 app.get('/login', (req, res) => res.render('login'));
 
@@ -73,10 +89,12 @@ app.post('/login', async (req, res) => {
 app.get('/home', verificarAutenticacao, (req, res) => res.render('index'));
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login'); });
 
-// --- ÁREA DO ADMINISTRADOR (REQUISITO 1.6) ---
+/**
+ * ROTAS ADMINISTRATIVAS (GERENCIAMENTO DE ALUNOS, CATEGORIAS E HABILIDADES)
+ */
 app.get('/admin', verificarAdmin, (req, res) => res.render('admin/dashboard'));
 
-// 1. Gerenciar Alunos (CRUD Completo)
+// Gestão de Alunos (CRUD)
 app.get('/admin/alunos', verificarAdmin, async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM alunos ORDER BY nome');
@@ -93,7 +111,6 @@ app.post('/admin/alunos', verificarAdmin, async (req, res) => {
     } catch (err) { res.send("Erro ao cadastrar: " + err.message); }
 });
 
-// Rota de Edição de Aluno (Resolve erro de "Cannot GET /admin/alunos/editar/...")
 app.get('/admin/alunos/editar/:id', verificarAdmin, async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM alunos WHERE id = $1', [req.params.id]);
@@ -108,7 +125,6 @@ app.post('/admin/alunos/editar/:id', verificarAdmin, async (req, res) => {
         await db.query('UPDATE alunos SET nome=$1, email=$2, senha=$3, e_admin=$4 WHERE id=$5', 
             [nome, email, senha, adminFlag, req.params.id]);
 
-        // SE O USUÁRIO EDITADO FOR O QUE ESTÁ LOGADO, ATUALIZA A SESSÃO
         if (req.session.usuario.id == req.params.id) {
             req.session.usuario.nome = nome;
             req.session.usuario.e_admin = adminFlag;
@@ -125,7 +141,7 @@ app.get('/admin/alunos/excluir/:id', verificarAdmin, async (req, res) => {
     } catch (err) { res.send("Erro ao excluir."); }
 });
 
-// 2. Gerenciar Categorias (CRUD Completo)
+// Gestão de Categorias
 app.get('/admin/categorias', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM categorias ORDER BY nome');
     res.render('admin/categorias', { categorias: result.rows });
@@ -148,7 +164,7 @@ app.post('/admin/categorias/editar/:id', verificarAdmin, async (req, res) => {
     res.redirect('/admin/categorias');
 });
 
-// 3. Gerenciar Habilidades (CRUD Completo)
+// Gestão de Habilidades
 app.get('/admin/habilidades', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM habilidades ORDER BY nome');
     res.render('admin/habilidades', { habilidades: result.rows });
@@ -169,7 +185,9 @@ app.post('/admin/habilidades/editar/:id', verificarAdmin, async (req, res) => {
     res.redirect('/admin/habilidades');
 });
 
-// --- ROTA PÚBLICA (REQUISITO 1.7 e 1.8) ---
+/**
+ * ROTAS DO PORTFÓLIO PÚBLICO (RECEITAS E COMENTÁRIOS)
+ */
 app.get('/publico', async (req, res) => {
     const catId = req.query.categoria;
     const busca = req.query.q;
@@ -202,13 +220,14 @@ app.get('/publico', async (req, res) => {
     } catch (err) { res.send('Erro ao carregar portfólio.'); }
 });
 
-// Comentários MongoDB Atlas (Requisito 1.8)
 app.post('/receitas/:id/comentarios', async (req, res) => {
     await Comentario.create({ receitaId: req.params.id, nome: req.body.nome, texto: req.body.texto });
     res.redirect('/publico');
 });
 
-// --- GERENCIAMENTO DE RECEITAS (REQUISITOS 1.2, 1.3, 1.5) ---
+/**
+ * ROTAS DE GERENCIAMENTO DE RECEITAS DOS ALUNOS
+ */
 app.get('/receitas', verificarAutenticacao, async (req, res) => {
     let sql = `SELECT r.*, STRING_AGG(DISTINCT c.nome, ', ') AS categorias FROM receitas r 
                LEFT JOIN receitas_categorias rc ON r.id = rc.receita_id 
@@ -239,7 +258,6 @@ app.post('/receitas', verificarAutenticacao, upload.single('imagem'), async (req
             for (let c of cats) await db.query('INSERT INTO receitas_categorias VALUES($1, $2)', [rId, c]);
         }
 
-        // Requisito 1.3: Vincula o criador e outros autores
         await db.query('INSERT INTO receitas_alunos VALUES($1, $2)', [rId, req.session.usuario.id]);
         if (autores) {
             const outr = Array.isArray(autores) ? autores : [autores];
@@ -251,7 +269,6 @@ app.post('/receitas', verificarAutenticacao, upload.single('imagem'), async (req
     } catch (err) { res.send('Erro detalhado: ' + err.message); }
 });
 
-// Edição de Receita (Requisito 1.5)
 app.get('/receitas/editar/:id', verificarAutenticacao, async (req, res) => {
     const r = await db.query('SELECT * FROM receitas WHERE id = $1', [req.params.id]);
     const cats = await db.query('SELECT * FROM categorias ORDER BY nome');
@@ -288,7 +305,9 @@ app.get('/receitas/excluir/:id', verificarAutenticacao, async (req, res) => {
     } else { res.status(403).send("Permissão negada."); }
 });
 
-// --- HABILIDADES DO ALUNO (REQUISITO 1.4) ---
+/**
+ * ROTAS DE HABILIDADES TÉCNICAS DO ALUNO
+ */
 app.get('/habilidades', verificarAutenticacao, async (req, res) => {
     const hab = await db.query('SELECT * FROM habilidades ORDER BY nome');
     const minhas = await db.query(`SELECT ah.id, h.nome, ah.nivel FROM alunos_habilidades ah 
@@ -310,7 +329,9 @@ app.post('/habilidades', verificarAutenticacao, async (req, res) => {
     } catch (err) { res.send("Erro ao salvar habilidade."); }
 });
 
-// --- RELATÓRIO (REQUISITO 1.9) ---
+/**
+ * ROTA DE RELATÓRIO E ESTATÍSTICAS
+ */
 app.get('/relatorio', async (req, res) => {
     try {
         const totalAlunos = await db.query('SELECT COUNT(*) FROM alunos');
@@ -327,4 +348,7 @@ app.get('/relatorio', async (req, res) => {
     } catch (err) { res.send("Erro no relatório."); }
 });
 
+/**
+ * INICIALIZAÇÃO DO SERVIDOR
+ */
 app.listen(3000, () => console.log(`🚀 Servidor rodando em http://localhost:3000`));
