@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Gerenciar Alunos - Admin</title>
+</head>
+<body>
+    <div class="menu">
+        <a href="/home">Início</a> <a href="/receitas">Receitas</a> <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a> <a href="/relatorio">Relatório</a>
+        <% if (usuario.e_admin) { %>
+            <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <% } %>
+        <a href="/logout">Sair</a>
+    </div>
+
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 40px;">Gerenciar Alunos</h1>
+        
+        <div class="recipe-card" style="max-width: 600px; margin: 0 auto 50px; padding: 30px;">
+            <h3 style="text-align: center; margin-bottom: 20px;">Cadastrar Novo Aluno</h3>
+            <form action="/admin/alunos" method="POST" style="box-shadow: none; padding: 0; border: none;">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" name="nome" placeholder="Ex: João Miguel" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail Acadêmico</label>
+                    <input type="email" name="email" placeholder="email@exemplo.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha de Acesso</label>
+                    <input type="password" name="senha" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                    <input type="checkbox" name="e_admin" style="width: auto; margin: 0;">
+                    <label style="margin: 0;">Conceder privilégios de Administrador</label>
+                </div>
+                <button type="submit" style="margin-top: 20px;">Salvar Aluno</button>
+            </form>
+        </div>
+
+        <div class="recipe-card">
+            <h3 style="margin-bottom: 20px;">Alunos Registrados</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: var(--bg-body);">
+                    <tr>
+                        <th style="padding: 15px; border-bottom: 2px solid var(--border);">Nome</th>
+                        <th style="padding: 15px; border-bottom: 2px solid var(--border);">E-mail</th>
+                        <th style="padding: 15px; border-bottom: 2px solid var(--border); text-align: center;">Tipo</th>
+                        <th style="padding: 15px; border-bottom: 2px solid var(--border); text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% alunos.forEach(aluno => { %>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 15px;"><%= aluno.nome %></td>
+                            <td style="padding: 15px;"><%= aluno.email %></td>
+                            <td style="padding: 15px; text-align: center;">
+                                <span class="category-badge" style="background: <%= aluno.e_admin ? '#fbbf24' : '#e2e8f0' %>; color: #1e293b;">
+                                    <%= aluno.e_admin ? 'ADMIN' : 'ALUNO' %>
+                                </span>
+                            </td>
+                            <td style="padding: 15px; text-align: center;">
+                                <a href="/admin/alunos/excluir/<%= aluno.id %>" 
+                                   onclick="return confirm('Tem certeza que deseja remover este aluno?')"
+                                   style="color: #ef4444; font-size: 1.2rem;">🗑️</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

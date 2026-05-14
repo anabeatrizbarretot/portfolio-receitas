@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Gerenciar Categorias - Admin</title>
+</head>
+<body>
+    <div class="menu">
+        <a href="/home">Início</a> <a href="/receitas">Receitas</a> <a href="/publico">Público</a>
+        <a href="/habilidades">Habilidades</a> <a href="/relatorio">Relatório</a>
+        <% if (usuario.e_admin) { %>
+            <a href="/admin" style="color: #fbbf24 !important; font-weight: bold;">Painel Admin</a>
+        <% } %>
+        <a href="/logout">Sair</a>
+    </div>
+
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 40px;">Gerenciar Categorias</h1>
+
+        <div class="recipe-card" style="max-width: 500px; margin: 0 auto 40px; padding: 30px;">
+            <h3 style="text-align: center; margin-bottom: 20px;">Nova Categoria</h3>
+            <form action="/admin/categorias" method="POST" style="box-shadow: none; padding: 0; border: none;">
+                <div class="form-group">
+                    <label>Nome da Categoria</label>
+                    <input type="text" name="nome" placeholder="Ex: Massas, Sobremesas, Vegana" required>
+                </div>
+                <button type="submit">Cadastrar Categoria</button>
+            </form>
+        </div>
+
+        <div class="recipe-card">
+            <h3 style="margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Categorias Disponíveis</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; padding: 10px 0;">
+                <% if (categorias && categorias.length > 0) { %>
+                    <% categorias.forEach(cat => { %>
+                        <span class="category-badge" style="padding: 8px 16px; font-size: 13px;">
+                            <%= cat.nome %>
+                        </span>
+                    <% }) %>
+                <% } else { %>
+                    <p style="color: var(--text-muted);">Nenhuma categoria cadastrada ainda.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
