@@ -8,29 +8,29 @@
 </head>
 <body>
     <nav class="menu">
-    <div class="nav-links">
-        <a href="/publico">Público</a>
-        <a href="/relatorio">Relatório</a>
+        <div class="nav-links">
+            <a href="/publico">Público</a>
+            <a href="/relatorio">Relatório</a>
 
-        <% if (usuario) { %>
-            <a href="/home">Início</a>
-            <a href="/receitas">Minhas Receitas</a>
-            <a href="/habilidades">Minhas Habilidades</a>
-            
-            <% if (usuario.e_admin) { %>
-                <a href="/admin" class="link-admin">Painel Admin</a>
+            <% if (usuario) { %>
+                <a href="/home">Início</a>
+                <a href="/receitas">Minhas Receitas</a>
+                <a href="/habilidades">Minhas Habilidades</a>
+                
+                <% if (usuario.e_admin) { %>
+                    <a href="/admin" class="link-admin">Painel Admin</a>
+                <% } %>
             <% } %>
-        <% } %>
-    </div>
-    
-    <div class="nav-auth">
-        <% if (usuario) { %>
-            <span class="user-name">Olá, <%= usuario.nome %></span>
-            <a href="/logout" class="link-sair">Sair</a>
-        <% } else { %>
-            <a href="/login" class="link-login-btn">Login Aluno</a>
-        <% } %>
-    </div>
+        </div>
+        
+        <div class="nav-auth">
+            <% if (usuario) { %>
+                <span class="user-name">Olá, <%= usuario.nome %></span>
+                <a href="/logout" class="link-sair">Sair</a>
+            <% } else { %>
+                <a href="/login" class="link-login-btn">Login Aluno</a>
+            <% } %>
+        </div>
     </nav>
 
     <main class="container">
@@ -69,7 +69,12 @@
                     <div class="recipe-card skill-card">
                         <div class="skill-header">
                             <h4><%= minha.nome %></h4>
-                            <span class="skill-score"><%= minha.nivel %> / 10</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="skill-score"><%= minha.nivel %> / 10</span>
+                                <a href="/habilidades/excluir/<%= minha.id %>" 
+                                   onclick="return confirm('Deseja remover esta habilidade do seu perfil?')"
+                                   style="text-decoration: none; color: #ef4444; font-size: 1.1rem;">🗑️</a>
+                            </div>
                         </div>
                         
                         <div class="progress-bar-bg">

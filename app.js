@@ -9,14 +9,14 @@ const fs = require('fs');
 const app = express();
 
 /**
- * CONFIGURAÇÕES DE CONEXÃO COM BANCO DE DADOS
+ * CONFIGURAÇÕES DE BANCO DE DADOS
  */
-const db = require('./config/db');       // PostgreSQL (Relacional)
-require('./config/mongo');               // MongoDB Atlas (Não-relacional)
+const db = require('./config/db');       // PostgreSQL
+require('./config/mongo');               // MongoDB Atlas
 const Comentario = require('./models/Comentario'); 
 
 /**
- * CONFIGURAÇÕES DE VIEW ENGINE E MIDDLEWARES BÁSICOS
+ * MIDDLEWARES E VIEW ENGINE
  */
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 /**
- * CONFIGURAÇÃO DO MULTER PARA GERENCIAMENTO DE UPLOADS
+ * CONFIGURAÇÃO DO MULTER PARA UPLOADS
  */
 const uploadDir = './public/uploads';
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 /**
- * CONFIGURAÇÃO DE SESSÕES DE USUÁRIO
+ * CONFIGURAÇÃO DE SESSÃO
  */
 app.use(session({
     secret: 'chave_projeto_1',
@@ -45,7 +45,7 @@ app.use(session({
 }));
 
 /**
- * MIDDLEWARE GLOBAL PARA DISPONIBILIZAR DADOS DA SESSÃO NO EJS
+ * MIDDLEWARE GLOBAL PARA EJS
  */
 app.use((req, res, next) => {
     res.locals.usuario = req.session.usuario || null;
@@ -53,7 +53,7 @@ app.use((req, res, next) => {
 });
 
 /**
- * MIDDLEWARES DE CONTROLE DE ACESSO E SEGURANÇA
+ * MIDDLEWARES DE SEGURANÇA
  */
 function verificarAutenticacao(req, res, next) {
     if (req.session.usuario) return next();
@@ -66,7 +66,7 @@ function verificarAdmin(req, res, next) {
 }
 
 /**
- * ROTAS DE AUTENTICAÇÃO (LOGIN, LOGOUT E HOME)
+ * ROTAS DE AUTENTICAÇÃO
  */
 app.get('/', (req, res) => res.redirect('/login'));
 app.get('/login', (req, res) => res.render('login'));
@@ -90,11 +90,11 @@ app.get('/home', verificarAutenticacao, (req, res) => res.render('index'));
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login'); });
 
 /**
- * ROTAS ADMINISTRATIVAS (GERENCIAMENTO DE ALUNOS, CATEGORIAS E HABILIDADES)
+ * ÁREA DO ADMINISTRADOR
  */
 app.get('/admin', verificarAdmin, (req, res) => res.render('admin/dashboard'));
 
-// Gestão de Alunos (CRUD)
+// 1. Gerenciar Alunos
 app.get('/admin/alunos', verificarAdmin, async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM alunos ORDER BY nome');
@@ -141,7 +141,7 @@ app.get('/admin/alunos/excluir/:id', verificarAdmin, async (req, res) => {
     } catch (err) { res.send("Erro ao excluir."); }
 });
 
-// Gestão de Categorias
+// 2. Gerenciar Categorias
 app.get('/admin/categorias', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM categorias ORDER BY nome');
     res.render('admin/categorias', { categorias: result.rows });
@@ -164,7 +164,15 @@ app.post('/admin/categorias/editar/:id', verificarAdmin, async (req, res) => {
     res.redirect('/admin/categorias');
 });
 
-// Gestão de Habilidades
+// NOVO: Excluir Categoria (Admin)
+app.get('/admin/categorias/excluir/:id', verificarAdmin, async (req, res) => {
+    try {
+        await db.query('DELETE FROM categorias WHERE id = $1', [req.params.id]);
+        res.redirect('/admin/categorias');
+    } catch (err) { res.send("Erro ao excluir categoria."); }
+});
+
+// 3. Gerenciar Habilidades (Catálogo)
 app.get('/admin/habilidades', verificarAdmin, async (req, res) => {
     const result = await db.query('SELECT * FROM habilidades ORDER BY nome');
     res.render('admin/habilidades', { habilidades: result.rows });
@@ -185,8 +193,16 @@ app.post('/admin/habilidades/editar/:id', verificarAdmin, async (req, res) => {
     res.redirect('/admin/habilidades');
 });
 
+// NOVO: Excluir Habilidade do Sistema (Admin)
+app.get('/admin/habilidades/excluir/:id', verificarAdmin, async (req, res) => {
+    try {
+        await db.query('DELETE FROM habilidades WHERE id = $1', [req.params.id]);
+        res.redirect('/admin/habilidades');
+    } catch (err) { res.send("Erro ao excluir habilidade do sistema."); }
+});
+
 /**
- * ROTAS DO PORTFÓLIO PÚBLICO (RECEITAS E COMENTÁRIOS)
+ * ROTA PÚBLICA E COMENTÁRIOS
  */
 app.get('/publico', async (req, res) => {
     const catId = req.query.categoria;
@@ -226,7 +242,7 @@ app.post('/receitas/:id/comentarios', async (req, res) => {
 });
 
 /**
- * ROTAS DE GERENCIAMENTO DE RECEITAS DOS ALUNOS
+ * GERENCIAMENTO DE RECEITAS DOS ALUNOS
  */
 app.get('/receitas', verificarAutenticacao, async (req, res) => {
     let sql = `SELECT r.*, STRING_AGG(DISTINCT c.nome, ', ') AS categorias FROM receitas r 
@@ -306,7 +322,7 @@ app.get('/receitas/excluir/:id', verificarAutenticacao, async (req, res) => {
 });
 
 /**
- * ROTAS DE HABILIDADES TÉCNICAS DO ALUNO
+ * HABILIDADES TÉCNICAS DO ALUNO
  */
 app.get('/habilidades', verificarAutenticacao, async (req, res) => {
     const hab = await db.query('SELECT * FROM habilidades ORDER BY nome');
@@ -329,8 +345,17 @@ app.post('/habilidades', verificarAutenticacao, async (req, res) => {
     } catch (err) { res.send("Erro ao salvar habilidade."); }
 });
 
+// NOVO: Remover habilidade do próprio perfil (Aluno)
+app.get('/habilidades/excluir/:id', verificarAutenticacao, async (req, res) => {
+    try {
+        await db.query('DELETE FROM alunos_habilidades WHERE id = $1 AND aluno_id = $2', 
+            [req.params.id, req.session.usuario.id]);
+        res.redirect('/habilidades');
+    } catch (err) { res.send("Erro ao remover habilidade do perfil."); }
+});
+
 /**
- * ROTA DE RELATÓRIO E ESTATÍSTICAS
+ * RELATÓRIO E ESTATÍSTICAS
  */
 app.get('/relatorio', async (req, res) => {
     try {
@@ -349,6 +374,6 @@ app.get('/relatorio', async (req, res) => {
 });
 
 /**
- * INICIALIZAÇÃO DO SERVIDOR
+ * INICIALIZAÇÃO
  */
 app.listen(3000, () => console.log(`🚀 Servidor rodando em http://localhost:3000`));
